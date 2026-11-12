@@ -718,3 +718,12 @@ body.is-dim .story-text { color: #cfd6e0; }
 }
 
 .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+/* =========================================================
+   커뮤니티 가이드라인 (guidelines.html)
+   ========================================================= */
+.guide { max-width: 760px; }
+.guide__head { display: flex; flex-direction: column; gap: 10px; }
+.guide__title { font-family: var(--font-head); font-weight: 900; font-size: clamp(30px, 4vw, 40px); letter-spacing: -0.03em; }
+.guide__lead { font-size: 16px; color: var(--text-body); }
+.guide .rules { font-size: 15px; gap: 8px; color: var(--text-soft); }
