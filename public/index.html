@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>무서운 게 딱좋아! · 실시간 괴담</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="logo">
+      <svg width="28" height="28" viewBox="0 0 30 30" fill="none" stroke="#ff2a4b" stroke-width="1.6" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M15 3 L22 25 L4 11 H26 L8 25 Z"/><circle cx="15" cy="15" r="2.4" fill="#ff2a4b"/></svg>
+      무서운 게 딱좋아!
+    </a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="index.html" aria-current="page">실시간 괴담</a>
+      <a href="index.html?tab=hof">명예의 전당</a>
+      <a href="index.html?tab=intl">해외 번역 썰</a>
+      <a href="index.html?tab=real">창작/실화 괴담</a>
+      <a href="movies.html">공포영화 랭킹</a>
+    </nav>
+    <form class="search" role="search" action="index.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20 L16 16"/></svg>
+      <label for="site-search" class="sr-only">괴담이나 영화 검색</label>
+      <input id="site-search" name="q" type="search" placeholder="소름 돋는 괴담이나 영화를 검색!">
+    </form>
+    <div class="header-actions">
+      <a href="write.html" class="btn btn--primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L8 19 L19 8 L16 5 L5 16 Z"/></svg>
+        괴담 작성
+      </a>
+      <button type="button" class="icon-btn" aria-label="심야 접속자 알림">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.8" aria-hidden="true"><path d="M6 16 V11 A6 6 0 0 1 18 11 V16 L20 18 H4 Z"/><path d="M10 21 H14"/></svg>
+        <span class="live-dot"></span>
+      </button>
+      <div class="user"><span class="avatar" aria-hidden="true"></span>심야괴담러</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page">
+
+  <!-- 오늘 밤 명예의 전당 1위 -->
+  <section class="hero-banner" aria-label="오늘 밤 명예의 전당 1위">
+    <div class="hero-banner__media">
+      <img src="images/hero-elevator.jpg" alt="붉은 비상등이 켜진 낡은 엘리베이터 홀">
+      <div class="hero-banner__badges">
+        <span class="chip chip--deep">오늘 밤 명예의 전당 1위</span>
+        <span class="chip chip--overlay amber">소름지수 98%</span>
+      </div>
+      <div class="hero-banner__foot">
+        <span class="chip chip--overlay">예상 소요시간 7분</span>
+        <span class="chip chip--outline-amber">R-19 TRIGGER WARNING</span>
+      </div>
+    </div>
+    <div class="hero-banner__body">
+      <p class="hero-banner__source"><span class="chip">[해외번역/Reddit Nosleep]</span>원작: u/TheInsomniaWatcher · 번역: 어둠의아카이브</p>
+      <h1 class="hero-banner__title"><a href="story.html">“절대 새벽 3시 33분 엘리베이터를 타지 마세요.”</a></h1>
+      <p class="hero-banner__excerpt">교대근무를 마치고 돌아온 19층 오피스텔. 평소와 달리 3시 33분에 멈춰 서 있던 3호기 엘리베이터의 버튼을 누른 순간, 거울 속 내 모습 뒤에 누군가가 똑같이 등을 맞대고 서 있었다. 그리고 닫히는 문 틈 사이로 들려온 나지막한 기계음...</p>
+      <div class="hero-banner__actions">
+        <a href="story.html" class="btn btn--primary btn--lg">지금 읽기 (심약자 주의)</a>
+        <span class="shudder-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg>3,420
+        </span>
+        <span class="stat">482 댓글</span>
+        <span class="stat">1,290 스크랩</span>
+        <span class="stat">조회 42.8k</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 분류 탭 + 정렬 -->
+  <div class="filter-bar">
+    <div class="filter-bar__group" role="tablist" aria-label="괴담 분류" data-toggle-group="selected">
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="true" data-tab="all">전체 보기</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="hot">실시간 인기</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="hof">명예의 전당</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="intl">해외 번역 (Reddit/2ch)</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="real">국내 실화 썰</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="novel">창작 단편</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" data-tab="film">공포 영화</button>
+    </div>
+    <div class="filter-bar__group" data-toggle-group="pressed">
+      <span class="filter-bar__label">정렬:</span>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="true">소름 많은순</button>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false">최신순</button>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false">댓글순</button>
+      <span class="chip chip--amber">심야핫토픽</span>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- 괴담 피드 -->
+    <section class="layout__main" aria-label="괴담 피드">
+
+      <article class="post-card">
+        <div class="post-card__meta">
+          <span class="chip chip--amber">[2ch 번역]</span>
+          <span class="chip">오컬트 의식</span>
+          <span>도쿄괴담꾼 · 12분 전</span>
+          <button type="button" class="icon-btn" aria-label="스크랩" aria-pressed="false" data-scrap>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" aria-hidden="true"><path d="M6 3 H18 V21 L12 16 L6 21 Z"/></svg>
+          </button>
+        </div>
+        <div class="post-card__row">
+          <div class="post-card__text">
+            <h2 class="post-card__title"><a href="story.html">[2ch 번역] 나 홀로 숨바꼭질 실시간 후기 스레드 모음: 화장실 물이 다시 차오른다</a></h2>
+            <p class="post-card__excerpt">2008년 VIP게시판을 공포로 몰아넣었던 전설의 스레드 전문 번역. 인형 속에 쌀과 손톱을 넣고 붉은 실로 묶은 뒤 TV 지지직 소리만 남겨두었는데, 옷장 문 틈으로 발소리가 멈췄다...</p>
+          </div>
+          <div class="post-card__thumb">
+            <img src="images/post-doll.jpg" alt="어두운 방 바닥에 놓인 낡은 인형">
+            <span class="chip chip--overlay">스레드 42개</span>
+          </div>
+        </div>
+        <div class="post-card__foot">
+          <button type="button" class="shudder-btn" aria-pressed="false" data-shudder data-count="2890">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg><span data-count-label>2,890</span> 소름
+          </button>
+          <button type="button" class="btn btn--text btn--sm">덤덤</button>
+          <span class="stat">댓글 318 · 조회 18.4k</span>
+        </div>
+      </article>
+
+      <article class="post-card">
+        <div class="post-card__meta">
+          <span class="chip chip--red">[국내 실화]</span>
+          <span class="chip">괴담 제보</span>
+          <span>야간경비원 · 45분 전</span>
+          <button type="button" class="icon-btn" aria-label="스크랩" aria-pressed="false" data-scrap>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" aria-hidden="true"><path d="M6 3 H18 V21 L12 16 L6 21 Z"/></svg>
+          </button>
+        </div>
+        <div class="post-card__row">
+          <div class="post-card__text">
+            <h2 class="post-card__title"><a href="story.html">[실화] 시골 외갓집 다락방에서 발견된 붉은 부적과 녹슨 거울</a></h2>
+            <p class="post-card__excerpt">지난 명절 충북 괴산 외갓집을 정리하던 중, 천장 다락 안쪽 깊숙한 목함 속에서 발견된 기이한 물건들입니다. 뒤편에 가족들의 생년월일이 칼로 긁혀 적혀 있었고 할머니께 여쭙자 낯빛이 하얗게 질리셨습니다.</p>
+          </div>
+          <div class="post-card__thumb">
+            <img src="images/post-talisman.jpg" alt="나무 상자 속 붉은 부적과 녹슨 거울">
+            <span class="chip chip--overlay">사진 4장 첨부</span>
+          </div>
+        </div>
+        <div class="post-card__foot">
+          <button type="button" class="shudder-btn" aria-pressed="false" data-shudder data-count="1740">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg><span data-count-label>1,740</span> 소름
+          </button>
+          <button type="button" class="btn btn--text btn--sm">덤덤</button>
+          <span class="stat">댓글 189 · 조회 12.1k</span>
+        </div>
+      </article>
+
+      <article class="post-card">
+        <div class="post-card__meta">
+          <span class="chip">[Reddit Nosleep]</span>
+          <span class="chip">스토커/심리</span>
+          <span>잠들지못하는밤 · 1시간 전</span>
+          <button type="button" class="icon-btn" aria-label="스크랩" aria-pressed="false" data-scrap>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" aria-hidden="true"><path d="M6 3 H18 V21 L12 16 L6 21 Z"/></svg>
+          </button>
+        </div>
+        <div class="post-card__row">
+          <div class="post-card__text">
+            <h2 class="post-card__title"><a href="story.html">[번역] 매일 밤 문 틈으로 편지를 밀어넣는 이웃집 노인의 정체</a></h2>
+            <p class="post-card__excerpt">이사 온 지 2주째, 새벽 2시마다 현관문 아래 틈새로 손글씨 쪽지가 밀려 들어온다. “오늘 옷 색깔이 잘 어울리네”, “어제는 왜 불을 늦게 껐어?” 하지만 오늘 아침 경비실에서 충격적인 사실을 듣게 되었다.</p>
+          </div>
+          <div class="post-card__thumb">
+            <img src="images/post-letter.jpg" alt="현관문 아래로 밀려 들어온 쪽지">
+            <span class="chip chip--overlay">시리즈 1부</span>
+          </div>
+        </div>
+        <div class="post-card__foot">
+          <button type="button" class="shudder-btn" aria-pressed="false" data-shudder data-count="1520">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg><span data-count-label>1,520</span> 소름
+          </button>
+          <button type="button" class="btn btn--text btn--sm">덤덤</button>
+          <span class="stat">댓글 142 · 조회 9.8k</span>
+        </div>
+      </article>
+
+      <article class="post-card">
+        <div class="post-card__meta">
+          <span class="chip chip--red">[창작 단편]</span>
+          <span class="chip">디지털 괴담</span>
+          <span>검은안개 · 2시간 전</span>
+          <button type="button" class="icon-btn" aria-label="스크랩" aria-pressed="false" data-scrap>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8" aria-hidden="true"><path d="M6 3 H18 V21 L12 16 L6 21 Z"/></svg>
+          </button>
+        </div>
+        <div class="post-card__row">
+          <div class="post-card__text">
+            <h2 class="post-card__title"><a href="story.html">[단편] 스마트폰 얼굴인식에 허공의 낯선 얼굴이 잠금해제되었다</a></h2>
+            <p class="post-card__excerpt">침대에 누워 폰을 잠금해제하려던 순간, 전면 센서의 초록색 불빛이 내 얼굴이 아닌 천장 구석 빈 공간을 조준하더니 딸깍 소리와 함께 화면이 열렸다. 등록된 얼굴 이름: “지하의 주인”...</p>
+          </div>
+          <div class="post-card__thumb">
+            <img src="images/post-phone.jpg" alt="어둠 속에서 빛나는 스마트폰을 든 손">
+            <span class="chip chip--overlay">단편 완결</span>
+          </div>
+        </div>
+        <div class="post-card__foot">
+          <button type="button" class="shudder-btn" aria-pressed="false" data-shudder data-count="980">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg><span data-count-label>980</span> 소름
+          </button>
+          <button type="button" class="btn btn--text btn--sm">덤덤</button>
+          <span class="stat">댓글 88 · 조회 6.5k</span>
+        </div>
+      </article>
+
+      <div class="feed-foot">
+        <button type="button" class="btn btn--ghost btn--lg">소름 돋는 괴담 더 불러오기</button>
+        <nav class="pagination" aria-label="페이지">
+          <a href="index.html" aria-current="page">1</a>
+          <a href="index.html?page=2">2</a>
+          <a href="index.html?page=3">3</a>
+          <span>...</span>
+          <a href="index.html?page=84">84</a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 사이드바 -->
+    <aside class="layout__side" aria-label="사이드바">
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">진짜 무서운 영화 TOP 5</h2>
+          <span class="panel__meta">매니아 검증</span>
+        </div>
+        <ol class="rank-list">
+          <li class="rank-row rank-row--top"><span class="rank-num rank-num--gold">1</span><div class="rank-row__body"><p class="rank-row__title">유전 (Hereditary, 2018)</p><p class="rank-row__sub">“불쾌감과 공포의 완벽한 결합”</p></div><span class="rank-row__score">9.4</span></li>
+          <li class="rank-row"><span class="rank-num rank-num--silver">2</span><div class="rank-row__body"><p class="rank-row__title">랑종 (The Medium, 2021)</p><p class="rank-row__sub">페이크 다큐 끝판왕 소름</p></div><span class="rank-row__score">9.1</span></li>
+          <li class="rank-row"><span class="rank-num rank-num--silver">3</span><div class="rank-row__body"><p class="rank-row__title">주 (Incantation, 2022)</p><p class="rank-row__sub">관객에게 전이되는 저주 주문</p></div><span class="rank-row__score">8.9</span></li>
+          <li class="rank-row"><span class="rank-num">4</span><div class="rank-row__body"><p class="rank-row__title">컨저링 (The Conjuring, 2013)</p><p class="rank-row__sub">점프스케어의 압도적 긴장</p></div><span class="rank-row__score">8.8</span></li>
+          <li class="rank-row"><span class="rank-num">5</span><div class="rank-row__body"><p class="rank-row__title">곡성 (The Wailing, 2016)</p><p class="rank-row__sub">한국 오컬트 스릴러의 정점</p></div><span class="rank-row__score">8.7</span></li>
+        </ol>
+        <a href="movies.html" class="btn btn--ghost btn--sm">내 인생 공포영화 투표하기</a>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">주간 스토리텔러 랭킹</h2>
+          <span class="panel__meta amber">WEEK 42</span>
+        </div>
+        <ol class="rank-list">
+          <li class="teller-row"><span class="rank-num rank-num--gold rank-num--lg">1</span><div class="rank-row__body"><p class="rank-row__title">심야번역가</p><p class="rank-row__sub">게시글 14편 등록</p></div><span class="rank-row__score">48.2k 소름</span></li>
+          <li class="teller-row"><span class="rank-num rank-num--silver rank-num--lg">2</span><div class="rank-row__body"><p class="rank-row__title">폐가탐험대</p><p class="rank-row__sub">심령스팟 답사기</p></div><span class="rank-row__score">32.1k 소름</span></li>
+          <li class="teller-row"><span class="rank-num rank-num--silver rank-num--lg">3</span><div class="rank-row__body"><p class="rank-row__title">방구석오컬트</p><p class="rank-row__sub">전통 민담/주술 분석</p></div><span class="rank-row__score">21.9k 소름</span></li>
+        </ol>
+      </section>
+
+      <section class="panel panel--red">
+        <div class="panel__head">
+          <h2 class="panel__title"><span class="live-dot"></span> 실시간 심야 톡</h2>
+          <span class="panel__meta amber">03:42 AM</span>
+        </div>
+        <p class="muted" style="font-size: 13px">현재 <strong class="mono" style="color: var(--text)">2,410명</strong>이 불 끄고 함께 떨고 있습니다.</p>
+        <div id="talk-list" style="display: flex; flex-direction: column; gap: 6px">
+          <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">새벽3시커피</span><span class="muted">방금 전</span></p><p class="talk-item__text">엘리베이터 썰 진짜 미쳤다... 뒤돌아보기 무서워서 벽에 붙어있음</p></div>
+          <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">귀신보는고양이</span><span class="muted">1분 전</span></p><p class="talk-item__text">다락방 부적 사진 확대해보니까 먹물 번진 자국 사람 손바닥 모양 아닌가요?</p></div>
+          <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">오싹마니아</span><span class="muted">3분 전</span></p><p class="talk-item__text">오늘 밤 유전 다시 정주행 간다... 창문 닫고 봐라 소리 지를 수 있음</p></div>
+        </div>
+        <form class="talk-form" id="talk-form">
+          <label for="talk-input" class="sr-only">심야 톡 입력</label>
+          <input id="talk-input" type="text" placeholder="공포의 한마디를 남겨보세요..." maxlength="80">
+          <button type="submit" aria-label="보내기">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a0a0c" aria-hidden="true"><path d="M4 4 L20 12 L4 20 L6 12 Z"/></svg>
+          </button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">시간대별 소름 발생량</h2>
+          <span class="panel__meta blood">PEAK 03:00</span>
+        </div>
+        <svg viewBox="0 0 280 100" width="100%" height="100" preserveAspectRatio="none" role="img" aria-label="22시부터 05시까지 소름 발생량, 03시 33분에 최고">
+          <path d="M0 78 C40 76 60 82 90 72 C120 62 140 66 170 50 C200 34 215 20 238 16 C252 14 262 34 280 26 L280 100 L0 100 Z" fill="rgba(255,42,75,0.12)"/>
+          <path d="M0 78 C40 76 60 82 90 72 C120 62 140 66 170 50 C200 34 215 20 238 16 C252 14 262 34 280 26" fill="none" stroke="#ff2a4b" stroke-width="2"/>
+          <circle cx="238" cy="16" r="4" fill="#ffd6dc"/>
+        </svg>
+        <div class="chart-axis"><span>22:00</span><span>00:00</span><span>02:00</span><strong>03:33</strong><span>05:00</span></div>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__row">
+      <div style="max-width: 520px; display: flex; flex-direction: column; gap: 8px">
+        <p class="site-footer__brand">무서운 게 딱좋아! <span class="chip chip--deep">19금 심야모드</span></p>
+        <p>본 플랫폼의 괴담 및 영상 데이터는 심신 미약자, 노약자, 임산부에게 심리적 불안을 유발할 수 있습니다. 열람 시 심야 안전에 유의하십시오.</p>
+      </div>
+      <div class="tracker">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg>
+        <div><p class="mono muted" style="font-size: 11px">WITCHING HOUR TRACKER</p><p>오늘 기록된 소름 수치: <strong class="mono">14,290 스푸크</strong></p></div>
+      </div>
+    </div>
+    <div class="site-footer__row">
+      <div class="site-footer__links">
+        <a href="#">커뮤니티 가이드라인</a>
+        <a href="#">트리거 주의 &amp; 윤리 규범</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">소름 지수 가이드</a>
+      </div>
+      <span class="mono" style="font-size: 12px">© 무서운 게 딱좋아! Do not look behind you.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "museoun-ge-ttak-joa",
+  "version": "0.1.0",
+  "description": "무서운 게 딱좋아! — 공포 콘텐츠 커뮤니티 MVP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

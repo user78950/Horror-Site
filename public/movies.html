@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공포영화 매니아 랭킹 &amp; 투표 · 무서운 게 딱좋아!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="logo">
+      <svg width="28" height="28" viewBox="0 0 30 30" fill="none" stroke="#ff2a4b" stroke-width="1.6" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M15 3 L22 25 L4 11 H26 L8 25 Z"/><circle cx="15" cy="15" r="2.4" fill="#ff2a4b"/></svg>
+      무서운 게 딱좋아!
+    </a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="index.html">실시간 괴담</a>
+      <a href="index.html?tab=hof">명예의 전당</a>
+      <a href="index.html?tab=intl">해외 번역 썰</a>
+      <a href="index.html?tab=real">창작/실화 괴담</a>
+      <a href="movies.html" aria-current="page">공포영화 랭킹</a>
+    </nav>
+    <div class="header-actions">
+      <a href="write.html" class="btn btn--primary">괴담 작성</a>
+      <div class="user"><span class="avatar" aria-hidden="true"></span>심야괴담러</div>
+    </div>
+  </div>
+</header>
+
+<section class="films-hero">
+  <div class="container films-hero__top">
+    <div class="films-hero__text">
+      <p style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center"><span class="chip chip--red">OCCULT CULT INDEX</span><span class="mono muted" style="font-size: 12px">실시간 업데이트 기준 03:00 AM (마녀의 시간)</span></p>
+      <h1 class="films-hero__title">매니아들이 직접 검증한<br><span class="blood">진짜 무서운</span> 공포영화 TOP 100</h1>
+      <p class="films-hero__desc">단순 대중 평점이 아닌 심박수 변화, 심리적 잔상, ‘실제 공포 지수’와 ‘소름 지수’로 매겨진 오컬트·호러 전문 랭킹입니다. 심약자는 시청에 주의하십시오.</p>
+    </div>
+    <div class="stat-box">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff2a4b" stroke-width="2" aria-hidden="true"><path d="M3 12 H7 L9 7 L12 17 L14 10 L15 12 H21"/></svg>
+      <div><p class="mono muted" style="font-size: 11px">총 집계된 공포 측정 표본</p><p class="stat-box__num">148,920</p><p class="blood" style="font-size: 12px">심박 쇼크 기록</p></div>
+    </div>
+  </div>
+  <div class="container films-hero__filters">
+    <div class="filter-bar__group" role="tablist" aria-label="장르" data-toggle-group="selected">
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="true">전체 랭킹</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">오컬트/퇴마</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">페이크 다큐/파운드 푸티지</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">슬래셔/고어</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">심리 스릴러</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">한국 공포</button>
+      <button type="button" class="toggle toggle--solid" role="tab" aria-selected="false">역대 명작</button>
+    </div>
+    <div class="filter-bar__group" data-toggle-group="pressed">
+      <span class="filter-bar__label">정렬:</span>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="true">매니아 소름 평점순</button>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false">최다 투표순</button>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false">최근 개봉순</button>
+    </div>
+  </div>
+</section>
+
+<main class="container page">
+  <div class="layout">
+
+    <div class="layout__main" style="gap: 28px">
+
+      <article class="panel panel--lg panel--amber film-feature" aria-label="이달의 명예의 전당 1위">
+        <div class="film-feature__aside">
+          <div class="poster" role="img" aria-label="유전 포스터 자리">
+            <span class="poster__rank">RANK 1</span>
+            <span class="poster__label">POSTER</span>
+            <span class="poster__title">유전</span>
+          </div>
+          <div class="score-box">
+            <span class="muted" style="font-size: 12px">오컬트 매니아 소름 지수</span>
+            <span class="score score--xl">9.4<small>/10</small></span>
+          </div>
+        </div>
+        <div class="film-feature__body">
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <span class="chip chip--amber">이달의 명예의 전당 1위</span>
+            <span class="chip">오컬트 / 심리 미스터리</span>
+            <span class="chip">미국 · 2018 · 127분</span>
+          </div>
+          <div>
+            <h2 class="film-feature__title">유전 <small>Hereditary, 2018</small></h2>
+            <p class="muted" style="font-size: 13px; margin-top: 4px">감독: 아리 에스터 · 주연: 토니 콜렛, 알렉스 울프, 밀리 샤피로 · 참여 검증자 14,290명</p>
+          </div>
+          <div class="metrics">
+            <p style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px"><span style="font-weight: 600; font-size: 14px">소름 다차원 공포 정밀 분석</span><span class="mono muted" style="font-size: 11px">실제 심박수 폭증 &amp; 신경성 공포 데이터</span></p>
+            <div class="metric metric--red"><p class="metric__head"><span>심리적 압박 (Psychological Dread)</span><span class="metric__value">98%</span></p><div class="metric__track"><div class="metric__bar" style="width: 98%"></div></div></div>
+            <div class="metric metric--red"><p class="metric__head"><span>잔상 / 후유증 (Aftermath Trauma)</span><span class="metric__value">99%</span></p><div class="metric__track"><div class="metric__bar" style="width: 99%"></div></div></div>
+            <div class="metric metric--amber"><p class="metric__head"><span>기괴함 &amp; 악마적 연출 (Bizarre/Occult)</span><span class="metric__value">95%</span></p><div class="metric__track"><div class="metric__bar" style="width: 95%"></div></div></div>
+            <div class="metric metric--slate"><p class="metric__head"><span>점프스케어 빈도 (Jump Scares)</span><span class="metric__value">65%</span></p><div class="metric__track"><div class="metric__bar" style="width: 65%"></div></div></div>
+          </div>
+          <blockquote class="review-quote">“불쾌감과 공포의 완벽한 결합. 상영관 불 켜진 뒤에도 차마 천장과 어두운 구석으로 고개를 돌릴 수 없었다.”<footer>오컬트수집가 (LV.5 퇴마사) · 소름 추천 1,842회</footer></blockquote>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" class="btn btn--primary">내 평가 및 소름 지수 투표하기</button>
+            <button type="button" class="btn btn--ghost">관람 후기 및 실화 괴담 (38개)</button>
+          </div>
+        </div>
+      </article>
+
+      <section aria-label="2위부터 10위" style="display: flex; flex-direction: column; gap: 14px">
+        <div class="panel__head">
+          <h2 class="panel__title" style="font-size: 20px">매니아 공식 소름 랭킹 (2위 ~ 10위)</h2>
+          <span class="mono muted" style="font-size: 12px">실시간 투표 가중치 반영됨</span>
+        </div>
+
+        <article class="panel film-card">
+          <div class="poster poster--sm" role="img" aria-label="랑종 포스터 자리"><span class="poster__rank">#2</span><span class="poster__title">랑종</span></div>
+          <div class="film-card__body">
+            <p class="film-card__meta"><span class="chip">페이크 다큐 / 샤머니즘</span><span>태국·한국 · 2021</span><span class="score score--lg">9.1<small>/10</small></span></p>
+            <h3 class="film-card__title">랑종 <small>The Medium, 2021</small></h3>
+            <p class="film-card__desc">페이크 다큐 끝판왕. 태국 북동부 이산 지역의 무당 가문에서 벌어지는 기괴하고 불가역적인 빙의와 파국. 후반 40분은 숨조차 쉴 수 없는 아비규환.</p>
+            <div class="film-card__foot"><span class="chip chip--amber">점프스케어 중 / 멘탈붕괴 극상</span><span class="mono muted" style="font-size: 12px">후기 612개</span><button type="button" class="btn btn--sm btn--outline-blood vote-btn" aria-pressed="false" data-vote>소름 투표</button></div>
+          </div>
+        </article>
+
+        <article class="panel film-card">
+          <div class="poster poster--sm" role="img" aria-label="주 포스터 자리"><span class="poster__rank">#3</span><span class="poster__title">주</span></div>
+          <div class="film-card__body">
+            <p class="film-card__meta"><span class="chip">실화 모티브 / 저주 전이</span><span>대만 · 2022</span><span class="score score--lg">8.9<small>/10</small></span></p>
+            <h3 class="film-card__title">주 <small>Incantation, 2022</small></h3>
+            <p class="film-card__desc">관객에게 직접 저주 주문을 읊게 만드는 인터랙티브 악마주의 공포. 시청 후 두통 호소자 속출.</p>
+            <div class="film-card__foot"><span class="chip chip--amber">시각적 트리거 주의 (환공포증)</span><span class="mono muted" style="font-size: 12px">후기 489개</span><button type="button" class="btn btn--sm btn--outline-blood vote-btn" aria-pressed="false" data-vote>소름 투표</button></div>
+          </div>
+        </article>
+
+        <article class="panel film-card">
+          <div class="poster poster--sm" role="img" aria-label="컨저링 포스터 자리"><span class="poster__rank">#4</span><span class="poster__title">컨저링</span></div>
+          <div class="film-card__body">
+            <p class="film-card__meta"><span class="chip">하우스 호러 / 엑소시즘</span><span>미국 · 2013</span><span class="score score--lg">8.8<small>/10</small></span></p>
+            <h3 class="film-card__title">컨저링 <small>The Conjuring, 2013</small></h3>
+            <p class="film-card__desc">제임스 완 감독의 현대 정통 하우스 호러. 워렌 부부의 실화 엑소시즘 파일 바탕. 박수 소리 하나만으로 서스펜스를 극한까지 몰아붙이는 연출력.</p>
+            <div class="film-card__foot"><span class="chip chip--amber">사운드 점프스케어 강함</span><span class="mono muted" style="font-size: 12px">후기 1,204개</span><button type="button" class="btn btn--sm btn--outline-blood vote-btn" aria-pressed="false" data-vote>소름 투표</button></div>
+          </div>
+        </article>
+
+        <article class="panel film-card">
+          <div class="poster poster--sm" role="img" aria-label="곡성 포스터 자리"><span class="poster__rank">#5</span><span class="poster__title">곡성</span></div>
+          <div class="film-card__body">
+            <p class="film-card__meta"><span class="chip">한국 샤머니즘 / 미스터리</span><span>한국 · 2016</span><span class="score score--lg">8.7<small>/10</small></span></p>
+            <h3 class="film-card__title">곡성 <small>The Wailing, 2016</small></h3>
+            <p class="film-card__desc">의심과 현혹, 기독교적 은유와 한국 무속 신앙이 뒤엉킨 압도적 카오스. 닭이 세 번 울기 전까지 누구도 믿지 마라.</p>
+            <div class="film-card__foot"><span class="chip chip--amber">서스펜스 및 미스터리</span><span class="mono muted" style="font-size: 12px">후기 952개</span><button type="button" class="btn btn--sm btn--outline-blood vote-btn" aria-pressed="false" data-vote>소름 투표</button></div>
+          </div>
+        </article>
+
+        <article class="panel film-card">
+          <div class="poster poster--sm" role="img" aria-label="미드소마 포스터 자리"><span class="poster__rank">#6</span><span class="poster__title">미드소마</span></div>
+          <div class="film-card__body">
+            <p class="film-card__meta"><span class="chip">포크 호러 / 백야 광기</span><span>미국·스웨덴 · 2019</span><span class="score score--lg">8.5<small>/10</small></span></p>
+            <h3 class="film-card__title">미드소마 <small>Midsommar, 2019</small></h3>
+            <p class="film-card__desc">밤이 없는 백야의 한여름 축제. 화사한 햇살과 꽃잎 아래에서 벌어지는 잔혹한 엽기 의식. 어둠보다 무서운 찬란한 대낮의 공포.</p>
+            <div class="film-card__foot"><span class="chip chip--amber">고어 잔혹 묘사 주의</span><span class="mono muted" style="font-size: 12px">후기 734개</span><button type="button" class="btn btn--sm btn--outline-blood vote-btn" aria-pressed="false" data-vote>소름 투표</button></div>
+          </div>
+        </article>
+
+        <button type="button" class="btn btn--ghost btn--lg">7위 ~ 20위 영화 랭킹 더 불러오기</button>
+      </section>
+    </div>
+
+    <aside class="layout__side" aria-label="사이드바">
+
+      <section class="panel panel--red" id="poll">
+        <div class="panel__head"><h2 class="panel__title" style="font-size: 16px">실시간 긴급 투표</h2><span class="chip chip--red">D-2 남음</span></div>
+        <p style="font-weight: 600">“당신 인생에서 밤잠을 가장 오래 설치게 한 작품은?”</p>
+        <p class="mono muted" style="font-size: 12px">총 28,140명 참가 중</p>
+        <div class="poll-options" role="radiogroup" aria-label="투표 항목">
+          <button type="button" class="poll-option" role="radio" aria-checked="false" data-pct="42"><span class="poll-option__fill"></span><span class="poll-option__label">1. 유전 (Hereditary)</span><span class="poll-option__pct"></span></button>
+          <button type="button" class="poll-option" role="radio" aria-checked="false" data-pct="29"><span class="poll-option__fill"></span><span class="poll-option__label">2. 랑종 (The Medium)</span><span class="poll-option__pct"></span></button>
+          <button type="button" class="poll-option" role="radio" aria-checked="false" data-pct="18"><span class="poll-option__fill"></span><span class="poll-option__label">3. 주 (Incantation)</span><span class="poll-option__pct"></span></button>
+          <button type="button" class="poll-option" role="radio" aria-checked="false" data-pct="11"><span class="poll-option__fill"></span><span class="poll-option__label">4. 셔터 (Shutter, 2004)</span><span class="poll-option__pct"></span></button>
+        </div>
+        <button type="button" class="btn btn--ghost" id="poll-submit" disabled>투표 완료하고 결과 상세 보기</button>
+      </section>
+
+      <section class="panel" style="gap: 14px" id="matcher">
+        <div>
+          <h2 class="panel__title" style="font-size: 16px">오늘 밤 맞춤 영화 찾기</h2>
+          <p class="muted" style="font-size: 13px; margin-top: 4px">오늘 밤 당신의 공포 수용 한도에 맞춘 영화를 3초 만에 매칭해 드립니다.</p>
+        </div>
+        <p class="mono muted" style="font-size: 12px">원하는 공포 타입 선택:</p>
+        <div class="mood-grid" data-toggle-group="pressed" id="mood-group">
+          <button type="button" class="toggle" aria-pressed="true" data-mood="occult">귀신/오컬트</button>
+          <button type="button" class="toggle" aria-pressed="false" data-mood="psych">심리/추리</button>
+          <button type="button" class="toggle" aria-pressed="false" data-mood="gore">슬래셔/고어</button>
+        </div>
+        <label for="tolerance" class="mono muted" style="font-size: 12px">후유증 감당 능력:</label>
+        <input id="tolerance" class="range" type="range" min="0" max="100" value="70">
+        <p class="range-labels"><span>가벼운 오싹함만</span><span>영혼 파괴 허용</span></p>
+        <button type="button" class="btn btn--primary" id="match-btn">저주받은 영화 추천받기</button>
+        <div class="match-result" id="match-result" hidden aria-live="polite">
+          <p class="mono amber" style="font-size: 11px">오늘 밤의 매칭 결과</p>
+          <p class="match-result__title" id="match-title"></p>
+          <p style="font-size: 13px; color: var(--text-body); margin-top: 2px" id="match-note"></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel__title" style="font-size: 16px">실시간 매니아 한줄평</h2>
+        <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">[랑종] 심야관람객</span><span class="muted">방금 전</span></p><p class="talk-item__text">“자취방인데 방 문 틈새를 쳐다볼 수가 없네요. 카메라 들고 도망치던 장면이 안 잊혀짐...”</p></div>
+        <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">[주] 퇴마원정대</span><span class="muted">2분 전</span></p><p class="talk-item__text">“주문 절대 따라 읽지 마세요. 장난으로 외웠다가 가위 눌렸다는 썰 진짜인 듯.”</p></div>
+        <div class="talk-item"><p class="talk-item__head"><span class="talk-item__name">[유전] 영화학도K</span><span class="muted">5분 전</span></p><p class="talk-item__text">“소리 없이 다가오는 연출이 공포 영화의 문법을 완전히 파괴함. 올해 최고작 인정.”</p></div>
+        <a href="#" class="blood" style="font-size: 13px">전체 코멘트 피드 보기</a>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__row">
+      <p class="site-footer__brand">무서운 게 딱좋아! <span class="chip chip--deep">19금 심야모드</span></p>
+      <span class="mono" style="font-size: 12px">Witching Hour Tracker · 오늘 기록된 소름 14,290 스푸크</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

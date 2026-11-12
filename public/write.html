@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>새로운 공포 괴담 작성 · 무서운 게 딱좋아!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="index.html" class="logo">
+      <svg width="28" height="28" viewBox="0 0 30 30" fill="none" stroke="#ff2a4b" stroke-width="1.6" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M15 3 L22 25 L4 11 H26 L8 25 Z"/><circle cx="15" cy="15" r="2.4" fill="#ff2a4b"/></svg>
+      무서운 게 딱좋아!
+    </a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="index.html">실시간 괴담</a>
+      <a href="index.html?tab=hof">명예의 전당</a>
+      <a href="index.html?tab=intl">해외 번역 썰</a>
+      <a href="index.html?tab=real">창작/실화 괴담</a>
+      <a href="movies.html">공포영화 랭킹</a>
+    </nav>
+    <div class="header-actions">
+      <div class="user"><span class="avatar" aria-hidden="true"></span>심야괴담러</div>
+    </div>
+  </div>
+</header>
+
+<form id="write-form" novalidate>
+
+<div class="editor-bar">
+  <div class="container editor-bar__inner">
+    <a href="index.html" class="back-link" aria-label="뒤로">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="2" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg>
+    </a>
+    <div class="editor-bar__title">
+      <p class="editor-bar__kicker">GRIMOIRE TERMINAL // v4.02</p>
+      <h1 class="editor-bar__heading">새로운 공포 괴담 작성</h1>
+    </div>
+    <span class="mono muted" style="font-size: 12px" id="save-status" aria-live="polite">자동 저장됨 (방금 전)</span>
+    <a href="story.html" class="btn btn--ghost">미리보기</a>
+    <button type="submit" class="btn btn--primary">괴담 발행하기</button>
+  </div>
+</div>
+
+<main class="container page">
+  <div class="layout">
+
+    <div class="layout__main">
+
+      <section class="panel" style="padding: 22px 24px; gap: 18px">
+        <fieldset class="field-group">
+          <legend class="field-label">괴담 범주 선택 (CATEGORY)</legend>
+          <div class="choice-row" data-toggle-group="pressed" data-input="category">
+            <button type="button" class="toggle" aria-pressed="false" data-value="intl">해외 번역 (Reddit / 2ch)</button>
+            <button type="button" class="toggle" aria-pressed="true" data-value="real">국내 실화 썰</button>
+            <button type="button" class="toggle" aria-pressed="false" data-value="novel">단편 창작 괴담</button>
+            <button type="button" class="toggle" aria-pressed="false" data-value="legend">도시전설 / 오컬트</button>
+            <button type="button" class="toggle" aria-pressed="false" data-value="film">공포영화 분석·리뷰</button>
+          </div>
+          <input type="hidden" name="category" value="real">
+          <p class="muted" style="font-size: 12px">해외 아카이브 출처 표기 (Nosleep / 2ch Occult Board) · <span class="amber">원작자 저작권 존중 캠페인</span></p>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend class="field-label">공포 강도 및 트리거 주의 설정 (TRIGGER WARNINGS)</legend>
+          <div class="choice-row">
+            <button type="button" class="check" role="checkbox" aria-checked="true" data-warning="r19"><span class="check__box" aria-hidden="true">✓</span>R-19 심야 전용</button>
+            <button type="button" class="check" role="checkbox" aria-checked="true" data-warning="gore"><span class="check__box" aria-hidden="true">✓</span>유혈/고어 묘사</button>
+            <button type="button" class="check" role="checkbox" aria-checked="false" data-warning="jumpscare"><span class="check__box" aria-hidden="true">✓</span>점프스케어 주의</button>
+            <button type="button" class="check" role="checkbox" aria-checked="false" data-warning="claustrophobia"><span class="check__box" aria-hidden="true">✓</span>폐소공포 유발</button>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="editor-card">
+        <div class="title-field">
+          <label for="title" class="mono muted" style="font-size: 12px">제목 · 열람 시 긴장도 극대화 제목 추천</label>
+          <input id="title" name="title" type="text" maxlength="60" value="자정 3시마다 거실 거울 속 여자가 나를 향해 반 발짝씩">
+          <p class="title-field__count"><span id="title-count">33</span> / 60자</p>
+        </div>
+
+        <div class="format-bar" role="toolbar" aria-label="서식">
+          <button type="button" class="format-bar__btn" data-cmd="bold" aria-label="굵게" style="font-weight: 700">B</button>
+          <button type="button" class="format-bar__btn" data-cmd="italic" aria-label="기울임" style="font-style: italic">I</button>
+          <button type="button" class="format-bar__btn" data-cmd="strikeThrough" aria-label="취소선" style="text-decoration: line-through">S</button>
+          <span class="format-bar__sep" aria-hidden="true"></span>
+          <button type="button" class="format-bar__btn mono" data-cmd="formatBlock" data-arg="h2" style="font-size: 13px">H1</button>
+          <button type="button" class="format-bar__btn mono" data-cmd="formatBlock" data-arg="h3" style="font-size: 13px">H2</button>
+          <span class="format-bar__sep" aria-hidden="true"></span>
+          <button type="button" class="format-bar__occult" data-cmd="insertHorizontalRule">오컬트 실선</button>
+          <button type="button" class="format-bar__occult" data-spoiler>블러 가림</button>
+          <button type="button" class="format-bar__occult">증거 사진</button>
+          <button type="button" class="format-bar__occult">공포 사운드</button>
+        </div>
+
+        <div class="editor-body" id="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="본문">
+          <p>그 집의 전 주인이 왜 침실 옷장 문을 전부 안쪽에서 못질해 두었는지, 이사 첫날엔 그저 낡은 집의 하자라고만 생각했다.</p>
+          <p>사건이 시작된 건 이사 후 닷새째 되던 새벽 3시 17분이었다.</p>
+          <p>욕실 환풍기 쪽에서 ‘탁, 탁, 탁’ 하는 아주 메마른 소리가 나기 시작했다. 마치 어린아이의 마른 손톱으로 타일을 긁는 듯한 소리였다. 잠에서 깬 나는 휴대폰 플래시를 켜고 거실을 가로질렀다. 거실 중앙에 세워둔 대형 전신거울 앞을 지나칠 때, 거울 속에 비친 내 그림자의 목이 미세하게 꺾여 있는 것을 보았다.</p>
+          <hr>
+          <p>더 끔찍한 건 그게 아니었다.<br>거울 속 내 등 뒤 어둠 속에, 전혀 모르는 여자의 젖은 정수리가 바닥에 달라붙은 채 나를 올려다보고 있었다.</p>
+          <p class="blood strong">“너, 지금 보고 있지?”</p>
+          <p>귀 바로 뒤에서 축축한 입김과 함께 낮은 속삭임이 울려 퍼졌다. <span class="spoiler" tabindex="0" title="스포일러 블러 (마우스를 올리면 보임)">거울 속 그 여자의 입꼬리가 귀밑까지 찢어지며 반 발짝 내 발등 쪽으로 손을 뻗어왔다.</span></p>
+          <div class="attach" contenteditable="false">
+            <img src="images/evidence-hall.jpg" alt="첨부된 현장 사진 미리보기">
+            <div class="attach__info">
+              <p class="mono" style="font-size: 12px"><span class="blood strong">[현장 첨부 사진]</span> <span class="muted">evidence_mirror_0317AM.jpg</span></p>
+              <p>새벽 3시 18분 촬영된 거실 거울 하단 왜곡 현상 원본</p>
+              <p class="amber" style="font-size: 12px">소름 유발 인증 완료</p>
+            </div>
+            <button type="button" class="btn btn--text btn--sm" data-remove-attach>삭제</button>
+          </div>
+          <div class="attach attach--audio" contenteditable="false">
+            <span class="attach__play" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0a0a0c"><path d="M7 4 L20 12 L7 20 Z"/></svg></span>
+            <div class="attach__info">
+              <p style="font-weight: 600">배경 앰비언스: [심야의 괘종시계와 숨소리.mp3]</p>
+              <p class="muted" style="font-size: 12px">독자가 스크롤을 내릴 때 잔잔하게 자동 재생됩니다 (심장박동 주의)</p>
+            </div>
+            <span class="mono muted" style="font-size: 12px">01:42</span>
+          </div>
+        </div>
+
+        <div class="status-bar" aria-live="polite">
+          <span>글자 수: <strong id="char-count">612</strong>자</span>
+          <span>예상 완독 시간: <strong id="read-time">약 1분 30초</strong></span>
+          <span>예상 공포 강도: <strong class="blood">극상 (Nightmare Tier)</strong></span>
+          <span class="push">마크다운 문법 지원</span>
+        </div>
+      </section>
+
+      <section class="panel" style="padding: 20px 24px">
+        <label for="tag-input" class="field-label">공포 태그 (쉼표로 구분하여 최대 5개)</label>
+        <div class="tag-input" id="tag-box">
+          <span class="tag">#거울괴담<button type="button" aria-label="#거울괴담 태그 삭제">×</button></span>
+          <span class="tag">#새벽3시<button type="button" aria-label="#새벽3시 태그 삭제">×</button></span>
+          <span class="tag">#자취방실화<button type="button" aria-label="#자취방실화 태그 삭제">×</button></span>
+          <input id="tag-input" type="text" placeholder="태그 입력 후 쉼표 또는 Enter">
+        </div>
+      </section>
+    </div>
+
+    <aside class="layout__side" aria-label="창작 코치">
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title" style="font-size: 16px">썸네일 커버 설정</h2><span class="panel__meta amber">권장 16:9</span></div>
+        <label class="dropzone" for="thumb-input">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16 L15 11 L5 19"/></svg>
+          <span style="font-size: 14px; font-weight: 600" id="thumb-label">클릭하여 이미지 교체</span>
+          <span class="muted" style="font-size: 12px">또는 이미지를 여기로 드래그하세요</span>
+        </label>
+        <input id="thumb-input" name="thumbnail" type="file" accept="image/*" class="sr-only">
+        <p class="muted" style="font-size: 12px">어둡고 으스스한 썸네일일수록 피드 클릭률이 높아집니다.</p>
+      </section>
+
+      <section class="panel" style="gap: 14px">
+        <h2 class="panel__title" style="font-size: 16px">공포 스토리텔러 비법</h2>
+        <div class="tip"><span class="tip__num">01</span><div><p class="tip__title">구체적 시공간 명시</p><p class="tip__desc">“어느 날 밤”보다는 “2023년 11월 4일 새벽 3시 17분, 신림동 반지하방”처럼 정확한 환경을 묘사할 때 독자의 심리적 방어선이 무너집니다.</p></div></div>
+        <div class="tip"><span class="tip__num">02</span><div><p class="tip__title">점진적 공포의 증폭 (Crescendo)</p><p class="tip__desc">처음엔 작은 이상 현상(시계 소리, 이상한 냄새)으로 시작하여 마침내 정체를 드러내는 구조를 취하세요.</p></div></div>
+        <div class="tip"><span class="tip__num">03</span><div><p class="tip__title">시각적/청각적 증거물 배치</p><p class="tip__desc">실제 촬영한 흐릿한 사진이나 현장 녹음 오디오를 중간에 삽입하면 ‘소름’ 투표 수가 급상승합니다.</p></div></div>
+      </section>
+
+      <section class="panel panel--amber">
+        <div class="panel__head"><h2 class="panel__title" style="font-size: 16px">명예의 전당 승격 가이드</h2><span class="panel__meta amber">소름 1,000+ 달성 시</span></div>
+        <p style="font-size: 13px; color: var(--text-soft)">발행 후 회원들의 ‘소름(Shudder)’ 투표수가 1,000회를 돌파하면 메인 상단 [오늘 밤의 명예의 전당]에 영구 박제되며 전설 배지가 수여됩니다.</p>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="980" aria-label="현재 실시간 심야 기준선"><div class="progress__bar" style="width: 98%"></div></div>
+        <p class="mono muted" style="display: flex; justify-content: space-between; font-size: 12px"><span>현재 실시간 심야 기준선</span><span class="amber">980 소름</span></p>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel__title" style="font-size: 15px">괴담 작성 윤리 및 금지 사항</h2>
+        <ul class="rules">
+          <li>실제 미제 살인사건 유족 비하 및 명예훼손 금지</li>
+          <li>실제 거주지의 상세 동호수 노출 시 자동 블라인드</li>
+          <li>점프스케어 플래시 영상(깜놀 짤)은 경고 태그 필수</li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+</main>
+</form>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__row">
+      <p class="site-footer__brand">무서운 게 딱좋아! <span class="chip chip--deep">19금 심야모드</span></p>
+      <span class="mono" style="font-size: 12px">Do not look behind you.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
