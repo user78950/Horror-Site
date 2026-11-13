@@ -727,3 +727,95 @@ body.is-dim .story-text { color: #cfd6e0; }
 .guide__title { font-family: var(--font-head); font-weight: 900; font-size: clamp(30px, 4vw, 40px); letter-spacing: -0.03em; }
 .guide__lead { font-size: 16px; color: var(--text-body); }
 .guide .rules { font-size: 15px; gap: 8px; color: var(--text-soft); }
+
+/* =========================================================
+   연출 (effects.js)
+   ========================================================= */
+@keyframes fx-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes fx-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 1px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-2px, -1px); }
+  80% { transform: translate(2px, 1px); }
+}
+@keyframes fx-vanish { 0% { opacity: 0; } 15% { opacity: 1; } 65% { opacity: 1; filter: blur(0); } 100% { opacity: 0.06; filter: blur(3px); } }
+@keyframes fx-black { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fx-flash { 0% { opacity: 0.85; } 25% { opacity: 0; } 50% { opacity: 0.85; } 75% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes fx-jump {
+  0% { opacity: 0; transform: scale(1.5); }
+  12% { opacity: 1; transform: scale(1.05) translate(-8px, 4px); }
+  24% { transform: scale(1.08) translate(8px, -4px); }
+  36% { transform: scale(1.05) translate(-6px, 2px); }
+  80% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0; transform: scale(1.02); }
+}
+
+/* 상세 뷰어: 연출이 켜져 있으면 재생 전까지 숨겨 둠 */
+.fx-on .fx-story [data-fx]:not(.fx-play) { opacity: 0; }
+
+.fx-on [data-fx].fx-play { animation: fx-fade 1.6s ease both; }
+.fx-on [data-fx="knock"].fx-play,
+.fx-on [data-fx="scream"].fx-play,
+.fx-on [data-fx="flash"].fx-play { animation: fx-fade 0.6s ease both; }
+.fx-on [data-fx="blackout"].fx-play { animation: fx-fade 1s ease 1.4s both; }
+.fx-on [data-fx="shake"].fx-play { animation: fx-fade 0.4s ease both, fx-shake 0.12s linear 0.4s 10; }
+.fx-on [data-fx="vanish"].fx-play { animation: fx-vanish 5s ease forwards; }
+.fx-on [data-fx="jump"].fx-play { animation: fx-fade 0.6s ease 0.9s both; }
+
+.fx-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+.fx-overlay--black { background: #000; animation: fx-black 1.4s ease forwards; }
+.fx-overlay--flash { background: #f4f4f5; animation: fx-flash 1s steps(1) forwards; }
+.fx-overlay--jump { background: #000; overflow: hidden; }
+.fx-overlay--jump img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.4) saturate(1.3); animation: fx-jump 0.9s ease forwards; }
+
+.story-end { text-align: center; font-family: var(--font-head); font-weight: 900; font-size: 32px; }
+
+/* 소리 켜기 안내 */
+.fx-gate {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+  padding: 20px 22px;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(255, 42, 75, 0.35);
+  background: rgba(255, 42, 75, 0.06);
+}
+.fx-gate[hidden] { display: none; }
+.fx-gate__text { flex: 1 1 260px; }
+.fx-gate__title { font-family: var(--font-head); font-weight: 700; font-size: 17px; }
+.fx-gate__desc { margin-top: 4px; font-size: 14px; color: var(--text-body); }
+
+/* 에디터: 연출이 붙은 문단 표시 */
+.editor-body [data-fx] { position: relative; padding-left: 14px; border-left: 2px solid var(--blood); }
+.editor-body [data-fx]::before {
+  content: '◆ ' attr(data-fx-label);
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; line-height: 1.6;
+  color: var(--amber-text);
+  user-select: none;
+}
+.editor-body [data-fx-tier="paid"] { border-left-color: var(--amber); }
+
+.fx-menu { padding: 14px 16px; border-bottom: 1px solid var(--line); background: #16161c; display: flex; flex-direction: column; gap: 10px; }
+.fx-menu[hidden] { display: none; }
+.fx-menu__hint { font-size: 13px; color: var(--text-muted); }
+.fx-menu__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+.fx-menu__item {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 10px 12px;
+  border-radius: 6px; border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  text-align: left;
+}
+.fx-menu__item:hover { border-color: var(--blood); }
+.fx-menu__name { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
+.fx-menu__name .chip { white-space: nowrap; }
+.fx-menu__desc { font-size: 12px; color: var(--text-muted); }
+.fx-menu__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.fx-menu__msg { font-size: 13px; color: var(--amber-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-on [data-fx].fx-play { animation: none !important; }
+  .fx-overlay--flash { display: none; }
+  .fx-overlay--jump img { animation: none; }
+}

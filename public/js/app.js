@@ -131,15 +131,19 @@
     });
   });
 
-  // 배경 앰비언스 (지금은 버튼 모양만 바뀝니다. 음원 파일을 넣으면 실제 재생)
+  // 배경 앰비언스: effects.js가 합성한 낮은 울림을 재생 (외부 음원 없음)
   const ambienceBtn = $('#ambience-btn');
-  if (ambienceBtn) {
-    // const audio = new Audio('audio/ambience.mp3'); audio.loop = true;
+  if (ambienceBtn && window.HorrorFX) {
     ambienceBtn.addEventListener('click', () => {
       const on = ambienceBtn.getAttribute('aria-pressed') !== 'true';
+      if (on) {
+        if (!HorrorFX.isSoundOn()) HorrorFX.enableSound();   // 이 클릭이 소리 허용 역할
+        HorrorFX.startDrone();
+      } else {
+        HorrorFX.stopDrone();
+      }
       ambienceBtn.setAttribute('aria-pressed', String(on));
       ambienceBtn.setAttribute('aria-label', on ? '배경 앰비언스 일시정지' : '배경 앰비언스 재생');
-      // on ? audio.play() : audio.pause();
     });
   }
 
@@ -269,6 +273,118 @@
     });
   }
 
+  // 연출 넣기 (effects.js의 연출 목록 사용)
+  const fxMenu = $('#fx-menu');
+  if (editor && fxMenu && window.HorrorFX) {
+    document.body.classList.add('fx-on');          // 에디터 미리보기용
+    const FX = window.HorrorFX;
+    const grid = $('#fx-menu-grid');
+    const msg = $('#fx-menu-msg');
+    const menuBtn = $('#fx-menu-btn');
+    const fxCount = $('#fx-count');
+    let lastBlock = null;
+
+    if (FX.SETTINGS.paidUnlocked) {
+      $('.fx-menu__hint', fxMenu).append(' 지금은 베타 기간이라 유료 연출도 무료로 쓸 수 있어요.');
+    }
+
+    // 커서가 있는 본문 문단(편집 영역의 바로 아래 자식) 찾기
+    const currentBlock = () => {
+      const sel = window.getSelection();
+      let node = sel && sel.rangeCount ? sel.anchorNode : null;
+      if (!node || !editor.contains(node)) return lastBlock && editor.contains(lastBlock) ? lastBlock : null;
+      while (node && node.parentNode !== editor) node = node.parentNode;
+      return node && node.nodeType === 1 && !node.matches('.attach, hr') ? node : null;
+    };
+    const remember = () => { const b = currentBlock(); if (b) lastBlock = b; };
+    editor.addEventListener('keyup', remember);
+    editor.addEventListener('mouseup', remember);
+
+    const updateCount = () => {
+      const blocks = $$('[data-fx]', editor);
+      const paid = blocks.filter((b) => b.dataset.fxTier === 'paid').length;
+      fxCount.textContent = blocks.length + '개' + (blocks.length ? ` (무료 ${blocks.length - paid} · 유료 ${paid})` : '');
+    };
+
+    const say = (text) => { msg.textContent = text; };
+
+    // 메뉴 항목 만들기
+    FX.CATALOG.forEach((fx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'fx-menu__item';
+      const paidNote = fx.tier === 'paid' ? '유료' : '무료';
+      btn.innerHTML = '<span class="fx-menu__name"></span><span class="fx-menu__desc"></span>';
+      const name = $('.fx-menu__name', btn);
+      name.textContent = fx.name;
+      const chip = document.createElement('span');
+      chip.className = 'chip ' + (fx.tier === 'paid' ? 'chip--red' : '');
+      chip.textContent = paidNote;
+      name.append(chip);
+      $('.fx-menu__desc', btn).textContent = fx.desc;
+      btn.addEventListener('mousedown', (e) => e.preventDefault());   // 본문 커서를 잃지 않게
+      btn.addEventListener('click', () => {
+        const block = currentBlock();
+        if (!block) { say('먼저 본문에서 연출을 넣을 문단을 클릭해 주세요.'); return; }
+        if (fx.tier === 'paid' && !FX.SETTINGS.paidUnlocked) {
+          say('유료 연출이에요. 결제 기능이 준비되면 사용할 수 있어요.');
+          // TODO(수익화): 결제 화면으로 이동
+          return;
+        }
+        block.dataset.fx = fx.id;
+        block.dataset.fxTier = fx.tier;
+        block.dataset.fxLabel = fx.name + ' · ' + (fx.tier === 'paid' ? '유료' : '무료');
+        lastBlock = block;
+        if (fx.sound && !FX.isSoundOn()) FX.enableSound();             // 이 클릭이 소리 허용 역할
+        FX.preview(fx.id, block);
+        updateCount();
+        say(`“${fx.name}”을 넣었어요.`);
+      });
+      grid.append(btn);
+    });
+
+    menuBtn.addEventListener('mousedown', (e) => e.preventDefault());
+    menuBtn.addEventListener('click', () => {
+      const open = fxMenu.hidden;
+      fxMenu.hidden = !open;
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    $('#fx-remove').addEventListener('mousedown', (e) => e.preventDefault());
+    $('#fx-remove').addEventListener('click', () => {
+      const block = currentBlock();
+      if (!block || !block.dataset.fx) { say('연출이 붙은 문단을 먼저 클릭해 주세요.'); return; }
+      delete block.dataset.fx; delete block.dataset.fxTier; delete block.dataset.fxLabel;
+      updateCount();
+      say('연출을 뺐어요.');
+    });
+
+    $('#fx-preview').addEventListener('mousedown', (e) => e.preventDefault());
+    $('#fx-preview').addEventListener('click', () => {
+      const block = currentBlock();
+      if (!block || !block.dataset.fx) { say('연출이 붙은 문단을 먼저 클릭해 주세요.'); return; }
+      const fx = FX.byId(block.dataset.fx);
+      if (fx && fx.sound && !FX.isSoundOn()) FX.enableSound();
+      FX.preview(block.dataset.fx, block);
+    });
+
+    // Enter로 새 문단을 만들면 브라우저가 연출 속성까지 복사하므로 새 문단에서는 지움
+    let splitting = false;
+    editor.addEventListener('keydown', (e) => { splitting = e.key === 'Enter' && !e.shiftKey; });
+    editor.addEventListener('input', () => {
+      if (!splitting) return;
+      splitting = false;
+      const block = currentBlock();
+      const prev = block && block.previousElementSibling;
+      if (block && prev && block.dataset.fx && prev.dataset.fx === block.dataset.fx) {
+        delete block.dataset.fx; delete block.dataset.fxTier; delete block.dataset.fxLabel;
+        updateCount();
+      }
+    });
+
+    updateCount();
+  }
+
   // 공포 태그 (최대 5개)
   const tagBox = $('#tag-box');
   if (tagBox) {
@@ -329,6 +445,7 @@
         title,
         content: $('#editor').innerHTML,
         warnings: $$('.check[aria-checked="true"]').map((b) => b.dataset.warning),
+        effects: $$('#editor [data-fx]').map((b) => ({ type: b.dataset.fx, tier: b.dataset.fxTier })),   // 연출 사용 통계용
         tags: $$('#tag-box .tag').map((t) => t.firstChild.textContent)
       };
       console.log('발행할 글', post);

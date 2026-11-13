@@ -95,15 +95,27 @@
           <button type="button" class="format-bar__occult" data-spoiler>블러 가림</button>
           <button type="button" class="format-bar__occult">증거 사진</button>
           <button type="button" class="format-bar__occult">공포 사운드</button>
+          <span class="format-bar__sep" aria-hidden="true"></span>
+          <button type="button" class="btn btn--primary btn--sm" id="fx-menu-btn" aria-expanded="false" aria-controls="fx-menu">연출 넣기</button>
+        </div>
+
+        <div class="fx-menu" id="fx-menu" hidden>
+          <p class="fx-menu__hint">커서가 있는 문단에 연출이 붙어요. 독자가 그 문단까지 스크롤하면 한 번 재생됩니다. 고르면 바로 미리보기가 나와요.</p>
+          <div class="fx-menu__grid" id="fx-menu-grid"></div>
+          <div class="fx-menu__foot">
+            <button type="button" class="btn btn--ghost btn--sm" id="fx-remove">이 문단의 연출 빼기</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="fx-preview">이 문단 다시 미리보기</button>
+            <span class="fx-menu__msg" id="fx-menu-msg" aria-live="polite"></span>
+          </div>
         </div>
 
         <div class="editor-body" id="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="본문">
           <p>그 집의 전 주인이 왜 침실 옷장 문을 전부 안쪽에서 못질해 두었는지, 이사 첫날엔 그저 낡은 집의 하자라고만 생각했다.</p>
           <p>사건이 시작된 건 이사 후 닷새째 되던 새벽 3시 17분이었다.</p>
-          <p>욕실 환풍기 쪽에서 ‘탁, 탁, 탁’ 하는 아주 메마른 소리가 나기 시작했다. 마치 어린아이의 마른 손톱으로 타일을 긁는 듯한 소리였다. 잠에서 깬 나는 휴대폰 플래시를 켜고 거실을 가로질렀다. 거실 중앙에 세워둔 대형 전신거울 앞을 지나칠 때, 거울 속에 비친 내 그림자의 목이 미세하게 꺾여 있는 것을 보았다.</p>
+          <p data-fx="knock" data-fx-label="효과음 · 노크 · 무료" data-fx-tier="free">욕실 환풍기 쪽에서 ‘탁, 탁, 탁’ 하는 아주 메마른 소리가 나기 시작했다. 마치 어린아이의 마른 손톱으로 타일을 긁는 듯한 소리였다. 잠에서 깬 나는 휴대폰 플래시를 켜고 거실을 가로질렀다. 거실 중앙에 세워둔 대형 전신거울 앞을 지나칠 때, 거울 속에 비친 내 그림자의 목이 미세하게 꺾여 있는 것을 보았다.</p>
           <hr>
           <p>더 끔찍한 건 그게 아니었다.<br>거울 속 내 등 뒤 어둠 속에, 전혀 모르는 여자의 젖은 정수리가 바닥에 달라붙은 채 나를 올려다보고 있었다.</p>
-          <p class="blood strong">“너, 지금 보고 있지?”</p>
+          <p class="blood strong" data-fx="shake" data-fx-label="글자 흔들림 · 유료" data-fx-tier="paid">“너, 지금 보고 있지?”</p>
           <p>귀 바로 뒤에서 축축한 입김과 함께 낮은 속삭임이 울려 퍼졌다. <span class="spoiler" tabindex="0" title="스포일러 블러 (마우스를 올리면 보임)">거울 속 그 여자의 입꼬리가 귀밑까지 찢어지며 반 발짝 내 발등 쪽으로 손을 뻗어왔다.</span></p>
           <div class="attach" contenteditable="false">
             <img src="images/evidence-hall.jpg" alt="첨부된 현장 사진 미리보기">
@@ -128,6 +140,7 @@
           <span>글자 수: <strong id="char-count">612</strong>자</span>
           <span>예상 완독 시간: <strong id="read-time">약 1분 30초</strong></span>
           <span>예상 공포 강도: <strong class="blood">극상 (Nightmare Tier)</strong></span>
+          <span>연출: <strong id="fx-count">2개</strong></span>
           <span class="push">마크다운 문법 지원</span>
         </div>
       </section>
@@ -193,6 +206,7 @@
   </div>
 </footer>
 
+<script src="js/effects.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

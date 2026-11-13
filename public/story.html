@@ -36,6 +36,15 @@
 
     <div class="layout__main" style="gap: 24px">
 
+      <section class="fx-gate" id="fx-gate" aria-label="소리 설정" hidden>
+        <div class="fx-gate__text">
+          <p class="fx-gate__title">이 글에는 소리와 화면 연출이 있어요</p>
+          <p class="fx-gate__desc">이어폰을 끼고 소리를 켠 채 읽는 걸 추천해요. 화면이 잠깐 깜빡이는 장면이 있습니다.</p>
+        </div>
+        <button type="button" class="btn btn--primary btn--lg" id="fx-sound-on">소리 켜고 읽기</button>
+        <button type="button" class="btn btn--ghost btn--lg" id="fx-sound-off">소리 없이 읽기</button>
+      </section>
+
       <article class="article" id="article">
         <header class="article__head">
           <div class="article__tags">
@@ -43,6 +52,7 @@
             <span class="chip">r/NOSLEEP</span>
             <span class="chip chip--red">심약자 주의</span>
             <span class="chip chip--amber">증거 사진 포함</span>
+            <span class="chip chip--amber">연출 포함</span>
           </div>
           <h1 class="article__title">절대 새벽 3시 33분 엘리베이터를 타지 마세요.</h1>
           <p class="article__meta">
@@ -62,6 +72,7 @@
               <output id="size-value" aria-live="polite">17px</output>
               <button type="button" id="size-up" aria-label="글자 크게" style="font-size: 17px">A+</button>
             </div>
+            <button type="button" class="toggle" id="fx-toggle" aria-pressed="true" style="min-height: 40px">연출 켜짐</button>
             <button type="button" class="btn btn--ghost btn--sm push" aria-pressed="false" data-scrap-text>보관</button>
             <button type="button" class="btn btn--ghost btn--sm" id="share-btn">공유</button>
             <a href="guidelines.html#report" class="btn btn--text btn--sm">신고</a>
@@ -77,10 +88,10 @@
             </div>
           </div>
 
-          <p class="story-text" id="ch1"><span class="dropcap" aria-hidden="true">교</span><span class="sr-only">교</span>대근무를 마치고 돌아온 19층 오피스텔 로비는 늘 그렇듯 눅눅한 소독약 냄새와 기름 쩐내로 가득 차 있었습니다. 시계는 막 새벽 3시 32분을 가리키고 있었죠. 온몸이 젖은 솜처럼 무거웠고, 그저 현관문 비밀번호를 누르고 침대에 쓰러질 생각뿐이었습니다.</p>
-          <p class="story-text">센서등이 꺼진 복도 끝에서 낡은 은색 엘리베이터가 낮게 웅웅거렸습니다. 1호기 문 앞에는 늘 붙어 있던 종이 한 장이 비틀린 채 걸려 있었는데, 누군가 붉은 매직으로 황급히 덧칠해 둔 글귀가 눈에 띄었습니다.</p>
+          <p class="story-text" id="ch1" data-fx="fade"><span class="dropcap" aria-hidden="true">교</span><span class="sr-only">교</span>대근무를 마치고 돌아온 19층 오피스텔 로비는 늘 그렇듯 눅눅한 소독약 냄새와 기름 쩐내로 가득 차 있었습니다. 시계는 막 새벽 3시 32분을 가리키고 있었죠. 온몸이 젖은 솜처럼 무거웠고, 그저 현관문 비밀번호를 누르고 침대에 쓰러질 생각뿐이었습니다.</p>
+          <p class="story-text" data-fx="fade">센서등이 꺼진 복도 끝에서 낡은 은색 엘리베이터가 낮게 웅웅거렸습니다. 1호기 문 앞에는 늘 붙어 있던 종이 한 장이 비틀린 채 걸려 있었는데, 누군가 붉은 매직으로 황급히 덧칠해 둔 글귀가 눈에 띄었습니다.</p>
 
-          <blockquote class="quote-box">
+          <blockquote class="quote-box" data-fx="fade">
             <p class="quote-box__label">[안내문 수기 낙서 번역]</p>
             <p class="quote-box__text">“3시 33분이 되는 순간 문이 열리면, 안에 아무도 없더라도 절대 발을 들이지 마십시오. 만약 이미 탔다면, 거울 속 당신의 목덜미를 절대 확인하지 마십시오.”</p>
           </blockquote>
@@ -97,11 +108,11 @@
             <figcaption>▲ 문제의 19층 엘리베이터 홀. 센서등은 작동하지 않았으며 내부의 녹색 비상등만이 점멸했다.</figcaption>
           </figure>
 
-          <p class="story-text" id="ch2">내부는 텅 비어 있었습니다. 다만 얼음장 같은 냉기가 쏟아져 나와 땀에 젖은 이마를 훑었습니다. 뒤통수가 싸늘하게 당기는 감각을 무시한 채, 저는 서둘러 탑승 버튼을 누르고 안으로 들어갔습니다. 닫힘 버튼을 연타하는 순간, 손가락 끝이 미세하게 떨렸습니다.</p>
-          <p class="story-text story-text--alert">그리고 문이 닫히자마자, 내부 후면 거울에 비친 제 모습이 무언가 잘못되어 있었습니다.</p>
-          <p class="story-text">엘리베이터 거울 속 저는 분명 등을 돌리고 서 있었습니다. 하지만 거울 안의 ‘나’는 고개를 180도 뒤로 꺾은 채, 핏기 없는 텅 빈 눈으로 이쪽을 똑바로 쳐다보고 있었습니다. 아니, 그것은 제가 아니었습니다. <strong>거울 속 내 등 뒤에 완벽히 맞대고 서 있던 검은 형체였습니다.</strong></p>
+          <p class="story-text" id="ch2" data-fx="fade">내부는 텅 비어 있었습니다. 다만 얼음장 같은 냉기가 쏟아져 나와 땀에 젖은 이마를 훑었습니다. 뒤통수가 싸늘하게 당기는 감각을 무시한 채, 저는 서둘러 탑승 버튼을 누르고 안으로 들어갔습니다. 닫힘 버튼을 연타하는 순간, 손가락 끝이 미세하게 떨렸습니다.</p>
+          <p class="story-text story-text--alert" data-fx="blackout">그리고 문이 닫히자마자, 내부 후면 거울에 비친 제 모습이 무언가 잘못되어 있었습니다.</p>
+          <p class="story-text" data-fx="fade">엘리베이터 거울 속 저는 분명 등을 돌리고 서 있었습니다. 하지만 거울 안의 ‘나’는 고개를 180도 뒤로 꺾은 채, 핏기 없는 텅 빈 눈으로 이쪽을 똑바로 쳐다보고 있었습니다. 아니, 그것은 제가 아니었습니다. <strong>거울 속 내 등 뒤에 완벽히 맞대고 서 있던 검은 형체였습니다.</strong></p>
 
-          <div class="alert-box" id="ch3">
+          <div class="alert-box" id="ch3" data-fx="flash">
             <p class="alert-box__label">시스템 결함 발생 경보음 기록</p>
             <p class="alert-box__quote">“엘리베이터가 멈춘 층수는 지하 4층 (B4). 하지만 이 오피스텔 건물엔 지하 2층까지만 존재했습니다.”</p>
             <p class="alert-box__text">디지털 패널의 붉은 세그먼트 숫자는 B1, B2를 지나더니 깨진 글리치 기호들을 토해냈고, 마침내 정지한 곳은 차가운 콘크리트 흙더미 냄새가 진동하는 ‘B4’였습니다. 문이 2인치쯤 벌어진 틈새 너머로, 수십 개의 손가락들이 틈을 비집고 들어오기 시작했습니다...</p>
@@ -116,9 +127,11 @@
           </figure>
 
           <p class="story-text">손톱이 닳아 없어진 창백한 손가락들이 고무 패킹을 쥐어뜯으며 내는 소리는 칠판을 긁는 쇳소리와 같았습니다. 거울 속 형체의 입이 천천히 귀 밑까지 찢어지며 제 귓가에 낮은 숨결을 내뱉었습니다.</p>
-          <p class="whisper">“이제 네가 문을 열어줄 차례야.”</p>
-          <p class="story-text" id="ch4">그 순간 제가 어떻게 비상정지 레버를 부러뜨리고 맨손으로 천장 환기구를 뜯어 탈출했는지는 아직도 기억나지 않습니다. 정신을 차렸을 땐 동이 튼 로비 바닥에 온몸에 긁힌 자국이 난 채 웅크리고 있었고, 출근하던 경비 아저씨가 경악하며 119를 누르고 있었습니다.</p>
-          <p class="story-text">경찰 조사 결과, 그 엘리베이터의 권상기 와이어는 이미 이틀 전 새벽에 완전히 끊어져 지하 2층 완충기에 처박힌 상태였다고 합니다. 그렇다면 제가 그날 밤 타고 내려간 것은... 대체 무엇이었을까요?</p>
+          <p class="whisper" data-fx="shake">“이제 네가 문을 열어줄 차례야.”</p>
+          <p class="story-text" id="ch4" data-fx="fade">그 순간 제가 어떻게 비상정지 레버를 부러뜨리고 맨손으로 천장 환기구를 뜯어 탈출했는지는 아직도 기억나지 않습니다. 정신을 차렸을 땐 동이 튼 로비 바닥에 온몸에 긁힌 자국이 난 채 웅크리고 있었고, 출근하던 경비 아저씨가 경악하며 119를 누르고 있었습니다.</p>
+          <p class="story-text">경찰 조사 결과, 그 엘리베이터의 권상기 와이어는 이미 이틀 전 새벽에 완전히 끊어져 지하 2층 완충기에 처박힌 상태였다고 합니다.</p>
+          <p class="story-text" data-fx="vanish">그렇다면 제가 그날 밤 타고 내려간 것은... 대체 무엇이었을까요?</p>
+          <p class="story-end" data-fx="jump">끝.</p>
 
           <div class="player">
             <button type="button" class="player__btn" id="ambience-btn" aria-pressed="false" aria-label="배경 앰비언스 재생">
@@ -258,6 +271,7 @@
   </div>
 </footer>
 
+<script src="js/effects.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
