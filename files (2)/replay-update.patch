@@ -1,0 +1,158 @@
+diff --git a/README.md b/README.md
+index cb5e55c..2f4586d 100644
+--- a/README.md
++++ b/README.md
+@@ -60,7 +60,7 @@ horror-site/
+ | 점프스케어 | `jump` | 유료 |
+ 
+ - **작가:** write.html에서 문단을 클릭하고 "연출 넣기"를 누르면 연출을 붙이고 바로 미리볼 수 있습니다.
+-- **독자:** story.html에서 "소리 켜고 읽기"를 누르면 효과음까지 재생됩니다. "연출 켜짐" 버튼으로 언제든 끌 수 있고, 기기의 '동작 줄이기' 설정을 켜 둔 독자에게는 움직임과 깜빡임을 건너뜁니다.
++- **독자:** story.html에서 "소리 켜고 읽기"를 누르면 효과음까지 재생됩니다. 연출은 한 번 읽을 때 한 번씩 재생되고, 놓친 연출은 문단 옆 ↻ 버튼으로, 전체는 글 끝의 "처음부터 다시 읽기"로 다시 볼 수 있습니다. 새로고침하면 항상 글 처음부터 시작합니다. "연출 켜짐" 버튼으로 언제든 끌 수 있고, 기기의 '동작 줄이기' 설정을 켜 둔 독자에게는 움직임과 깜빡임을 건너뜁니다.
+ - **효과음:** 모두 Web Audio로 코드에서 합성하므로 음원 파일과 저작권 문제가 없습니다.
+ - **유료 잠금:** `effects.js`의 `SETTINGS.paidUnlocked`가 지금은 `true`(베타 기간 전부 무료)입니다. 결제를 붙이면 서버에서 받은 구매 여부로 바꾸세요.
+ - **점프스케어 이미지:** `SETTINGS.jumpImage`는 임시로 시안 사진을 씁니다. 직접 만들었거나 상업적 이용이 허락된 이미지로 꼭 바꾸세요.
+diff --git a/public/css/style.css b/public/css/style.css
+index 3e0f760..0e5f4ea 100644
+--- a/public/css/style.css
++++ b/public/css/style.css
+@@ -814,6 +814,27 @@ body.is-dim .story-text { color: #cfd6e0; }
+ .fx-menu__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+ .fx-menu__msg { font-size: 13px; color: var(--amber-text); }
+ 
++/* 다시 보기(↻)와 처음부터 다시 읽기 */
++.fx-unit { position: relative; }
++.fx-replay {
++  position: absolute; top: 0; right: -34px;
++  width: 30px; height: 30px;
++  display: none; align-items: center; justify-content: center;
++  border-radius: 999px;
++  border: 1px solid var(--line-strong);
++  background: var(--bg-raised);
++  color: var(--text-muted);
++  font-size: 15px; line-height: 1;
++}
++.fx-replay:hover { color: var(--text); border-color: var(--blood); }
++.fx-on .fx-unit.is-played .fx-replay { display: inline-flex; }
++.fx-again { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px; border-radius: var(--r-md); background: var(--bg-raised); text-align: center; }
++.fx-again[hidden] { display: none; }
++
++@media (max-width: 720px) {
++  .fx-replay { top: -6px; right: -10px; width: 28px; height: 28px; font-size: 13px; }
++}
++
+ @media (prefers-reduced-motion: reduce) {
+   .fx-on [data-fx].fx-play { animation: none !important; }
+   .fx-overlay--flash { display: none; }
+diff --git a/public/js/effects.js b/public/js/effects.js
+index bead254..b2eed6d 100644
+--- a/public/js/effects.js
++++ b/public/js/effects.js
+@@ -243,10 +243,18 @@
+     root.classList.add('fx-story');
+     document.body.classList.toggle('fx-on', fxOn);
+ 
++    // 1) 새로고침하면 항상 글 처음부터 시작
++    //    (브라우저가 이전 스크롤 위치로 돌아가면 소리 안내를 못 보고 연출을 놓치기 때문)
++    //    단, 목차 링크(#ch2 등)로 들어온 경우는 그 위치를 존중합니다.
++    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
++    if (!location.hash) window.scrollTo(0, 0);
++
+     // 소리 나는 연출이 있으면 "소리 켜고 읽기" 안내 표시
++    const hasSound = blocks.some((b) => byId(b.dataset.fx).sound);
+     const gate = document.getElementById('fx-gate');
+-    if (gate && blocks.some((b) => byId(b.dataset.fx).sound)) {
+-      gate.hidden = false;
++    const showGate = () => { if (gate && hasSound && !soundOn) gate.hidden = false; };
++    if (gate && hasSound) {
++      showGate();
+       const close = () => { gate.hidden = true; };
+       const on = document.getElementById('fx-sound-on');
+       const off = document.getElementById('fx-sound-off');
+@@ -265,9 +273,39 @@
+       toggle.addEventListener('click', () => { setFxOn(!fxOn); paint(); });
+     }
+ 
++    // 2) 문단마다 "다시 보기(↻)" 버튼
++    //    연출 블록을 .fx-unit으로 감싸고 버튼을 옆에 둡니다.
++    //    (버튼을 블록 안에 넣으면 '사라지는 문장'처럼 블록이 흐려질 때 버튼도 같이 사라짐)
++    const units = blocks.map((block) => {
++      const unit = document.createElement('div');
++      unit.className = 'fx-unit';
++      block.parentNode.insertBefore(unit, block);
++      unit.append(block);
++      const btn = document.createElement('button');
++      btn.type = 'button';
++      btn.className = 'fx-replay';
++      btn.textContent = '↻';
++      btn.title = byId(block.dataset.fx).name + ' 다시 보기';
++      btn.setAttribute('aria-label', btn.title);
++      btn.addEventListener('click', () => {
++        const fx = byId(block.dataset.fx);
++        if (fx.sound && !soundOn) enableSound();   // 이 클릭이 소리 허용 역할
++        block.classList.remove('fx-play');
++        void block.offsetWidth;                     // 애니메이션을 처음부터 다시 시작
++        play(block.dataset.fx, block);
++      });
++      unit.append(btn);
++      return { block, unit };
++    });
++
++    const markPlayed = (block) => {
++      const u = units.find((x) => x.block === block);
++      if (u) u.unit.classList.add('is-played');
++    };
++
+     // 화면에 60% 이상 들어오면 한 번 재생
+     if (!('IntersectionObserver' in window)) {
+-      blocks.forEach((b) => b.classList.add('fx-play'));
++      blocks.forEach((b) => { b.classList.add('fx-play'); markPlayed(b); });
+       return;
+     }
+     const io = new IntersectionObserver((entries) => {
+@@ -275,9 +313,31 @@
+         if (!entry.isIntersecting) return;
+         io.unobserve(entry.target);
+         play(entry.target.dataset.fx, entry.target);
++        markPlayed(entry.target);
+       });
+     }, { threshold: 0.6 });
+     blocks.forEach((b) => io.observe(b));
++
++    // 3) "처음부터 다시 읽기": 모든 연출을 초기화하고 맨 위로
++    const again = document.getElementById('fx-again');
++    const restart = document.getElementById('fx-restart');
++    if (again && restart) {
++      again.hidden = false;
++      restart.addEventListener('click', () => {
++        blocks.forEach((b) => io.unobserve(b));
++        units.forEach(({ block, unit }) => { block.classList.remove('fx-play'); unit.classList.remove('is-played'); });
++        stopDrone();
++        window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
++        showGate();
++        // 맨 위에 도착한 뒤에 다시 지켜봐야, 지금 보이는 마지막 연출이 곧바로 재생되지 않음
++        const started = Date.now();
++        const wait = () => {
++          if (window.scrollY <= 10 || Date.now() - started > 2500) blocks.forEach((b) => io.observe(b));
++          else requestAnimationFrame(wait);
++        };
++        requestAnimationFrame(wait);
++      });
++    }
+   }
+ 
+   window.HorrorFX = {
+diff --git a/public/story.html b/public/story.html
+index 330c6cf..391ff91 100644
+--- a/public/story.html
++++ b/public/story.html
+@@ -132,6 +132,10 @@
+           <p class="story-text">경찰 조사 결과, 그 엘리베이터의 권상기 와이어는 이미 이틀 전 새벽에 완전히 끊어져 지하 2층 완충기에 처박힌 상태였다고 합니다.</p>
+           <p class="story-text" data-fx="vanish">그렇다면 제가 그날 밤 타고 내려간 것은... 대체 무엇이었을까요?</p>
+           <p class="story-end" data-fx="jump">끝.</p>
++          <div class="fx-again" id="fx-again" hidden>
++            <p class="muted" style="font-size: 14px">놓친 연출은 문단 옆 ↻ 버튼으로 다시 볼 수 있어요.</p>
++            <button type="button" class="btn btn--ghost" id="fx-restart">처음부터 다시 읽기</button>
++          </div>
+ 
+           <div class="player">
+             <button type="button" class="player__btn" id="ambience-btn" aria-pressed="false" aria-label="배경 앰비언스 재생">

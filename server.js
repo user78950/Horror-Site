@@ -3,6 +3,7 @@
 // 다음 단계에서 아래 "API" 자리에 SQLite와 연결된 라우트를 붙이면 됩니다.
 
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
@@ -15,6 +16,36 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 서버가 살아 있는지 확인용
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
+});
+
+// 직접 넣은 효과음 목록: public/sounds 폴더의 소리 파일을 찾아 알려 줌
+// 이름·등급·설명은 public/sounds/sounds.json 에 적으면 반영되고, 없으면 파일 이름을 씀
+app.get('/api/sounds', (req, res) => {
+  const dir = path.join(__dirname, 'public', 'sounds');
+  let meta = [];
+  try {
+    meta = JSON.parse(fs.readFileSync(path.join(dir, 'sounds.json'), 'utf8')).sounds || [];
+  } catch (err) { /* sounds.json 이 없거나 형식이 틀리면 파일 이름만으로 표시 */ }
+  let files = [];
+  try {
+    files = fs.readdirSync(dir).filter((f) => /\.(mp3|ogg|wav|m4a)$/i.test(f));
+  } catch (err) { /* sounds 폴더가 없으면 빈 목록 */ }
+  const sounds = files.map((file, i) => {
+    const m = meta.find((x) => x.file === file) || {};
+    const base = file.replace(/\.[^.]+$/, '');
+    // 연출 이름은 영문·숫자만 씀. 한글 파일 이름처럼 남는 글자가 없으면 순번으로 대신함
+    let slug = String(m.id || base).replace(/[^a-z0-9_-]/gi, '-').toLowerCase().replace(/^-+|-+$/g, '');
+    if (!slug) slug = 'sound-' + (i + 1);
+    return {
+      id: 'snd-' + slug,
+      name: m.name || '효과음 · ' + base,
+      tier: m.tier === 'free' ? 'free' : 'paid',
+      desc: m.desc || '직접 추가한 효과음',
+      file: 'sounds/' + encodeURIComponent(file),
+      volume: typeof m.volume === 'number' ? m.volume : 0.8
+    };
+  });
+  res.json({ sounds });
 });
 
 // 예시: 앞으로 만들 라우트

@@ -40,6 +40,73 @@
   };
 
   const byId = (id) => CATALOG.find((e) => e.id === id);
+
+  /* ---------- 직접 넣은 효과음 파일 (public/sounds/) ----------
+     서버의 /api/sounds 가 sounds 폴더의 파일 목록을 알려 주면, 각 파일을
+     연출 목록 끝에 "snd-파일이름" 연출로 추가합니다.
+     서버 없이 열었을 때는 sounds/sounds.json 의 목록을 대신 씁니다. */
+  let soundsLoaded = null;
+  function loadCustomSounds() {
+    if (soundsLoaded) return soundsLoaded;
+    const add = (list) => {
+      (list || []).forEach((snd) => {
+        if (!snd || !snd.id || !snd.file || byId(snd.id)) return;
+        CATALOG.push({
+          id: snd.id,
+          name: snd.name || snd.id,
+          tier: snd.tier === 'free' ? 'free' : 'paid',
+          sound: true,
+          desc: snd.desc || '직접 추가한 효과음',
+          file: snd.file,
+          volume: typeof snd.volume === 'number' ? snd.volume : 0.8
+        });
+      });
+    };
+    const getJson = (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(url); return r.json(); });
+    soundsLoaded = getJson('/api/sounds')
+      .catch(() => getJson('sounds/sounds.json').then((data) => ({
+        sounds: (data.sounds || []).map((x) => Object.assign({}, x, {
+          id: 'snd-' + String(x.id || x.file).replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]/gi, '-').toLowerCase(),
+          file: 'sounds/' + x.file
+        }))
+      })))
+      .then((data) => { add(data.sounds); })
+      .catch(() => { /* 효과음 파일이 없어도 기본 연출은 그대로 동작 */ })
+      .then(() => { document.dispatchEvent(new CustomEvent('horrorfx:sounds-loaded')); });
+    return soundsLoaded;
+  }
+
+  // 파일을 한 번 받아 디코딩해 두고 재사용
+  const buffers = {};
+  function loadBuffer(fx) {
+    if (!ctx || !fx.file) return Promise.reject(new Error('no audio'));
+    if (!buffers[fx.id]) {
+      buffers[fx.id] = fetch(fx.file)
+        .then((r) => r.arrayBuffer())
+        .then((data) => new Promise((resolve, reject) => ctx.decodeAudioData(data, resolve, reject)));
+      buffers[fx.id].catch(() => { delete buffers[fx.id]; });
+    }
+    return buffers[fx.id];
+  }
+  function playFile(fx) {
+    if (!canPlay()) return;
+    loadBuffer(fx).then((buf) => {
+      const src = ctx.createBufferSource();
+      const g = ctx.createGain();
+      src.buffer = buf;
+      g.gain.value = fx.volume;
+      src.connect(g);
+      g.connect(ctx.destination);
+      src.start();
+    }).catch(() => {
+      // 디코딩에 실패하면 브라우저 기본 오디오로 재생
+      try { const a = new Audio(fx.file); a.volume = fx.volume; a.play(); } catch (e) { /* 재생 불가 */ }
+    });
+  }
+  // 소리를 켠 직후, 본문에 쓰인 효과음 파일을 미리 받아 둠 (재생이 늦지 않게)
+  function preloadFiles(ids) {
+    ids.map(byId).filter((fx) => fx && fx.file).forEach((fx) => loadBuffer(fx).catch(() => {}));
+  }
   const store = {
     get(key, fallback) { try { const v = localStorage.getItem(key); return v === null ? fallback : v; } catch (e) { return fallback; } },
     set(key, value) { try { localStorage.setItem(key, value); } catch (e) { /* 저장 못 해도 동작에는 문제없음 */ } }
@@ -209,8 +276,11 @@
         playSound('scream');
         overlay('jump', 950);
         break;
-      default:
+      default: {
+        const fx = byId(id);
+        if (fx && fx.file) playFile(fx);   // 직접 넣은 효과음 파일
         break;   // fade, shake, vanish 는 CSS 애니메이션만으로 재생
+      }
     }
   }
 
@@ -243,14 +313,22 @@
     root.classList.add('fx-story');
     document.body.classList.toggle('fx-on', fxOn);
 
+    // 1) 새로고침하면 항상 글 처음부터 시작
+    //    (브라우저가 이전 스크롤 위치로 돌아가면 소리 안내를 못 보고 연출을 놓치기 때문)
+    //    단, 목차 링크(#ch2 등)로 들어온 경우는 그 위치를 존중합니다.
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (!location.hash) window.scrollTo(0, 0);
+
     // 소리 나는 연출이 있으면 "소리 켜고 읽기" 안내 표시
+    const hasSound = blocks.some((b) => byId(b.dataset.fx).sound);
     const gate = document.getElementById('fx-gate');
-    if (gate && blocks.some((b) => byId(b.dataset.fx).sound)) {
-      gate.hidden = false;
+    const showGate = () => { if (gate && hasSound && !soundOn) gate.hidden = false; };
+    if (gate && hasSound) {
+      showGate();
       const close = () => { gate.hidden = true; };
       const on = document.getElementById('fx-sound-on');
       const off = document.getElementById('fx-sound-off');
-      if (on) on.addEventListener('click', () => { enableSound(); close(); });
+      if (on) on.addEventListener('click', () => { enableSound(); preloadFiles(blocks.map((b) => b.dataset.fx)); close(); });
       if (off) off.addEventListener('click', () => { disableSound(); close(); });
     }
 
@@ -265,9 +343,39 @@
       toggle.addEventListener('click', () => { setFxOn(!fxOn); paint(); });
     }
 
+    // 2) 문단마다 "다시 보기(↻)" 버튼
+    //    연출 블록을 .fx-unit으로 감싸고 버튼을 옆에 둡니다.
+    //    (버튼을 블록 안에 넣으면 '사라지는 문장'처럼 블록이 흐려질 때 버튼도 같이 사라짐)
+    const units = blocks.map((block) => {
+      const unit = document.createElement('div');
+      unit.className = 'fx-unit';
+      block.parentNode.insertBefore(unit, block);
+      unit.append(block);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'fx-replay';
+      btn.textContent = '↻';
+      btn.title = byId(block.dataset.fx).name + ' 다시 보기';
+      btn.setAttribute('aria-label', btn.title);
+      btn.addEventListener('click', () => {
+        const fx = byId(block.dataset.fx);
+        if (fx.sound && !soundOn) enableSound();   // 이 클릭이 소리 허용 역할
+        block.classList.remove('fx-play');
+        void block.offsetWidth;                     // 애니메이션을 처음부터 다시 시작
+        play(block.dataset.fx, block);
+      });
+      unit.append(btn);
+      return { block, unit };
+    });
+
+    const markPlayed = (block) => {
+      const u = units.find((x) => x.block === block);
+      if (u) u.unit.classList.add('is-played');
+    };
+
     // 화면에 60% 이상 들어오면 한 번 재생
     if (!('IntersectionObserver' in window)) {
-      blocks.forEach((b) => b.classList.add('fx-play'));
+      blocks.forEach((b) => { b.classList.add('fx-play'); markPlayed(b); });
       return;
     }
     const io = new IntersectionObserver((entries) => {
@@ -275,9 +383,31 @@
         if (!entry.isIntersecting) return;
         io.unobserve(entry.target);
         play(entry.target.dataset.fx, entry.target);
+        markPlayed(entry.target);
       });
     }, { threshold: 0.6 });
     blocks.forEach((b) => io.observe(b));
+
+    // 3) "처음부터 다시 읽기": 모든 연출을 초기화하고 맨 위로
+    const again = document.getElementById('fx-again');
+    const restart = document.getElementById('fx-restart');
+    if (again && restart) {
+      again.hidden = false;
+      restart.addEventListener('click', () => {
+        blocks.forEach((b) => io.unobserve(b));
+        units.forEach(({ block, unit }) => { block.classList.remove('fx-play'); unit.classList.remove('is-played'); });
+        stopDrone();
+        window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+        showGate();
+        // 맨 위에 도착한 뒤에 다시 지켜봐야, 지금 보이는 마지막 연출이 곧바로 재생되지 않음
+        const started = Date.now();
+        const wait = () => {
+          if (window.scrollY <= 10 || Date.now() - started > 2500) blocks.forEach((b) => io.observe(b));
+          else requestAnimationFrame(wait);
+        };
+        requestAnimationFrame(wait);
+      });
+    }
   }
 
   window.HorrorFX = {
@@ -287,6 +417,7 @@
     enableSound,
     disableSound,
     isSoundOn: () => soundOn,
+    loadCustomSounds,
     isFxOn: () => fxOn,
     play,
     preview,
@@ -296,5 +427,8 @@
   };
 
   // story.html: 본문(#article)에 연출이 있으면 자동으로 시작
-  document.addEventListener('DOMContentLoaded', () => initStory(document.getElementById('article')));
+  // 직접 넣은 효과음 목록을 먼저 불러온 뒤 시작 (본문에 "snd-..." 연출이 있을 수 있으므로)
+  document.addEventListener('DOMContentLoaded', () => {
+    loadCustomSounds().then(() => initStory(document.getElementById('article')));
+  });
 })();

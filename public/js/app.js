@@ -308,7 +308,9 @@
 
     const say = (text) => { msg.textContent = text; };
 
-    // 메뉴 항목 만들기
+    // 메뉴 항목 만들기 (직접 넣은 효과음 파일을 불러오면 다시 그림)
+    const renderMenu = () => {
+    grid.textContent = '';
     FX.CATALOG.forEach((fx) => {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -342,6 +344,9 @@
       });
       grid.append(btn);
     });
+    };
+    renderMenu();
+    document.addEventListener('horrorfx:sounds-loaded', renderMenu);
 
     menuBtn.addEventListener('mousedown', (e) => e.preventDefault());
     menuBtn.addEventListener('click', () => {

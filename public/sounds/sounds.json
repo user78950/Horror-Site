@@ -1,0 +1,25 @@
+{
+  "설명": "이 폴더에 mp3·ogg·wav·m4a 파일을 넣으면 연출 목록에 자동으로 추가됩니다. 아래 sounds 목록에 같은 file 이름으로 적으면 이름·등급·설명·음량을 정할 수 있습니다. tier는 free(무료) 또는 paid(유료), volume은 0~1입니다. source와 license에는 받은 곳과 라이선스를 꼭 적어 두세요.",
+  "sounds": [
+    {
+      "file": "sample-bell.wav",
+      "id": "sample-bell",
+      "name": "효과음 · 낮은 종소리 (예시)",
+      "tier": "free",
+      "desc": "멀리서 울리는 낮은 종소리",
+      "volume": 0.7,
+      "source": "직접 제작 (코드로 합성)",
+      "license": "자체 제작"
+    },
+    {
+      "file": "whisper.mp3",
+      "id": "whisper",
+      "name": "효과음 · 속삭임",
+      "tier": "paid",
+      "desc": "귓가에 들리는 알아들을 수 없는 속삭임",
+      "volume": 0.9,
+      "source": "직접 녹음 예정",
+      "license": "자체 제작"
+    }
+  ]
+}

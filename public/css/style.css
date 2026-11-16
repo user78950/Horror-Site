@@ -814,6 +814,27 @@ body.is-dim .story-text { color: #cfd6e0; }
 .fx-menu__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .fx-menu__msg { font-size: 13px; color: var(--amber-text); }
 
+/* 다시 보기(↻)와 처음부터 다시 읽기 */
+.fx-unit { position: relative; }
+.fx-replay {
+  position: absolute; top: 0; right: -34px;
+  width: 30px; height: 30px;
+  display: none; align-items: center; justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  font-size: 15px; line-height: 1;
+}
+.fx-replay:hover { color: var(--text); border-color: var(--blood); }
+.fx-on .fx-unit.is-played .fx-replay { display: inline-flex; }
+.fx-again { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px; border-radius: var(--r-md); background: var(--bg-raised); text-align: center; }
+.fx-again[hidden] { display: none; }
+
+@media (max-width: 720px) {
+  .fx-replay { top: -6px; right: -10px; width: 28px; height: 28px; font-size: 13px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fx-on [data-fx].fx-play { animation: none !important; }
   .fx-overlay--flash { display: none; }
