@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>감지된 사람: 2명 · 무서운 게 딱좋아!</title>
+  <meta name="theme-color" content="#000000">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="void-page">
+
+<!-- 칠흑 모드: 큰 제목, 글, 사진만 보이게. 메뉴와 버튼은 최소한으로 -->
+<main class="void">
+
+  <header class="void__head">
+    <p class="void__kicker">창작 단편 · 디지털 괴담 · 연출 포함 · 심약자 주의</p>
+    <h1 class="void__title">감지된 사람:<br>2명</h1>
+  </header>
+
+  <section class="fx-gate" id="fx-gate" aria-label="소리 설정" hidden>
+    <div class="fx-gate__text">
+      <p class="fx-gate__title">불을 끄고, 소리를 켜고 읽어 주세요</p>
+      <p class="fx-gate__desc">이 글에는 소리와 화면 연출이 있어요. 화면이 잠깐 꺼지거나 갑자기 무언가 나타나는 장면이 있습니다.</p>
+    </div>
+    <button type="button" class="btn btn--primary btn--lg" id="fx-sound-on">소리 켜고 읽기</button>
+    <button type="button" class="btn btn--ghost btn--lg" id="fx-sound-off">소리 없이 읽기</button>
+    <button type="button" class="btn btn--text" id="fx-off">연출 없이 읽기</button>
+  </section>
+
+  <article class="void__story" id="article">
+
+    <p data-fx="fade">독서실 마감 시간이 한참 지났는데도 나는 남아 있었다. 사장님이 열쇠를 맡기고 간 새벽 두 시, 3층 열람실에는 나 혼자였다.</p>
+
+    <p data-fx="fade">책상 위에는 선배에게 산 기출 시험지 한 묶음, 그리고 중고 거래로 싸게 구한 AI 안경이 있었다. 렌즈 너머로 보이는 걸 읽어 주고, 물어보면 답까지 알려 주는 안경이었다.</p>
+
+    <p data-fx="fade">반칙인 건 알았다. 그래도 내일 시험만 넘기면 됐다.</p>
+
+    <p class="hud-line" data-fx="type">렌즈 · 문서를 인식했습니다. 1번 문제의 정답은 ③입니다.</p>
+
+    <p data-fx="fade">안경은 정말 빨랐다. 나는 들리는 대로 받아 적기만 하면 됐다. 2번, 3번, 4번……</p>
+
+    <p data-fx="fade">마지막 장을 넘겼을 때, 문제 아래 여백에 아주 연한 회색 글씨가 있었다. 눈을 바짝 대야 겨우 보일 만큼 작은 글씨였다.</p>
+
+    <p class="hud-line" data-fx="type">렌즈 · 여백의 문장을 읽었습니다. “이 안경의 전 주인을 찾고 있습니다. 그는 아직 안경을 돌려받지 못했습니다.”</p>
+
+    <p data-fx="fade">선배가 장난으로 써 둔 낙서겠지. 그렇게 생각하고 시험지를 덮으려는데, 안경이 묻지도 않은 말을 했다.</p>
+
+    <p class="hud-line" data-fx="type">렌즈 · 주변에 사람 1명이 감지되었습니다. 방향: 뒤쪽. 거리: 2미터.</p>
+
+    <p data-fx="fade">열람실에는 나밖에 없었다. 나는 뒤를 돌아보는 대신, 안경에게 지금 보이는 화면을 저장하라고 했다.</p>
+
+    <figure class="hud" data-fx="fade">
+      <img src="images/evidence-hall.jpg" alt="비상등만 켜진 텅 빈 복도. 복도 끝 빈자리에 빨간 인식 상자가 그려져 있다">
+      <span class="hud__corner hud__corner--tl" aria-hidden="true"></span>
+      <span class="hud__corner hud__corner--tr" aria-hidden="true"></span>
+      <span class="hud__corner hud__corner--bl" aria-hidden="true"></span>
+      <span class="hud__corner hud__corner--br" aria-hidden="true"></span>
+      <span class="hud__meta" aria-hidden="true"><span class="live-dot"></span>LENS · REC 03:12:44</span>
+      <span class="hud__box" aria-hidden="true"><span class="hud__label">사람 · 97%</span></span>
+    </figure>
+
+    <p data-fx="fade">사진 속 복도는 비어 있었다. 그런데 안경은 그 빈자리에 빨간 네모를 그려 놓고, 사람이라고 했다.</p>
+
+    <p class="sfx-line" data-fx="knock">똑.  똑.  똑.</p>
+
+    <p data-fx="fade">열람실 문을 두드리는 소리였다. 문 앞 센서등은 꺼져 있었다.</p>
+
+    <p data-fx="blackout">그리고 열람실의 불이 한꺼번에 꺼졌다.</p>
+
+    <p class="hud-line hud-line--alert" data-fx="type">렌즈 · 거리: 1미터. 안경을 벗지 마세요.</p>
+
+    <p class="hud-line hud-line--alert" data-fx="shake">렌즈 · 안경을 벗으면 그가 보이지 않게 됩니다. 그러면 그는 더 가까이 올 수 있습니다.</p>
+
+    <p data-fx="fade">나는 떨리는 손으로 안경을 벗었다. 칠흑 같은 어둠뿐이었다. 아무것도, 아무도 보이지 않았다.</p>
+
+    <p data-fx="vanish">정말로, 아무도 없었다.</p>
+
+    <p data-fx="fade">책상 위에 내려놓은 안경 렌즈에서 희미한 빛이 새어 나왔다. 렌즈 안쪽에 마지막 문장이 떠 있었다.</p>
+
+    <p class="hud-line hud-line--alert" data-fx="type">렌즈 · 감지된 사람: 2명. 거리: 0미터.</p>
+
+    <p class="hud-line hud-line--alert" data-fx="jump">렌즈 · 새 주인을 등록했습니다.</p>
+
+    <div class="fx-again" id="fx-again" hidden style="background: #08080a">
+      <p class="muted" style="font-size: 14px">놓친 연출은 문단 옆 ↻ 버튼으로 다시 볼 수 있어요.</p>
+      <button type="button" class="btn btn--ghost" id="fx-restart">처음부터 다시 읽기</button>
+    </div>
+  </article>
+
+  <a href="index.html" class="void__exit">← 다른 괴담 보러 가기</a>
+</main>
+
+<button type="button" class="void-toggle" id="fx-toggle" aria-pressed="true">연출 켜짐</button>
+
+<script src="js/effects.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -25,7 +25,8 @@
     { id: 'vanish',   name: '사라지는 문장',   tier: 'paid', sound: false, desc: '읽고 나면 흐려져 사라짐' },
     { id: 'scream',   name: '효과음 · 비명',   tier: 'paid', sound: true,  desc: '짧고 날카로운 비명' },
     { id: 'flash',    name: '화면 깜빡임',     tier: 'paid', sound: false, desc: '1초에 2번, 밝기 제한' },
-    { id: 'jump',     name: '점프스케어',      tier: 'paid', sound: true,  desc: '이미지와 비명이 갑자기 덮침' }
+    { id: 'jump',     name: '점프스케어',      tier: 'paid', sound: true,  desc: '이미지와 비명이 갑자기 덮침' },
+    { id: 'type',     name: '타이핑',          tier: 'paid', sound: false, desc: 'AI가 말하듯 한 글자씩 써짐' }
   ];
 
   /* ---------- 설정 ----------
@@ -254,6 +255,24 @@
   /* =========================================================
      연출 재생
      ========================================================= */
+  // 타이핑: 문단 글자를 지웠다가 한 글자씩 다시 써 줌 (서식 없는 짧은 문단용)
+  function typeText(el) {
+    const full = el.dataset.fxText || (el.dataset.fxText = el.textContent);
+    clearTimeout(el._typeTimer);
+    if (reducedMotion()) { el.textContent = full; return; }
+    el.textContent = '';
+    el.classList.add('fx-typing');
+    let i = 0;
+    const tick = () => {
+      i += 1;
+      el.textContent = full.slice(0, i);
+      if (i >= full.length) { el.classList.remove('fx-typing'); return; }
+      const ch = full.charAt(i - 1);
+      el._typeTimer = setTimeout(tick, ch === ' ' ? 25 : '.,·:'.includes(ch) ? 260 : 55);
+    };
+    tick();
+  }
+
   function play(id, el) {
     if (el) el.classList.add('fx-play');
     if (!fxOn) return;
@@ -271,6 +290,10 @@
         break;
       case 'flash':
         if (!calm) overlay('flash', 1050);
+        break;
+      case 'type':
+        // 상세 뷰어에서만 실제로 타이핑. 에디터 미리보기에서 글자를 지우면 서식이 날아가므로 나타나기만 함
+        if (el && el.closest('.fx-story')) typeText(el);
         break;
       case 'jump':
         playSound('scream');
@@ -333,6 +356,10 @@
     }
 
     // 연출 켜기/끄기 버튼
+    // "연출 없이 읽기" 버튼이 있는 페이지
+    const offBtn = document.getElementById('fx-off');
+    if (offBtn) offBtn.addEventListener('click', () => { setFxOn(false); if (gate) gate.hidden = true; });
+
     const toggle = document.getElementById('fx-toggle');
     if (toggle) {
       const paint = () => {

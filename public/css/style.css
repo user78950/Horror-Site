@@ -814,6 +814,11 @@ body.is-dim .story-text { color: #cfd6e0; }
 .fx-menu__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .fx-menu__msg { font-size: 13px; color: var(--amber-text); }
 
+/* 타이핑 연출: 바로 보이고 글자만 한 자씩 */
+.fx-on [data-fx="type"].fx-play { animation: none; }
+@keyframes fx-caret { 50% { opacity: 0; } }
+.fx-typing::after { content: '▍'; margin-left: 2px; animation: fx-caret 0.8s steps(1) infinite; }
+
 /* 다시 보기(↻)와 처음부터 다시 읽기 */
 .fx-unit { position: relative; }
 .fx-replay {
@@ -840,3 +845,57 @@ body.is-dim .story-text { color: #cfd6e0; }
   .fx-overlay--flash { display: none; }
   .fx-overlay--jump img { animation: none; }
 }
+
+
+/* =========================================================
+   칠흑 모드 괴담 (story-glasses.html): 검은 바탕에 제목·글·사진만
+   ========================================================= */
+body.void-page { background: #000; }
+.void { max-width: 680px; margin: 0 auto; padding: 120px 24px 140px; display: flex; flex-direction: column; gap: 44px; }
+.void__head { display: flex; flex-direction: column; gap: 14px; }
+.void__kicker { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; color: #8a8f98; }
+.void__title { font-family: var(--font-head); font-weight: 900; font-size: clamp(42px, 8vw, 76px); line-height: 1.08; letter-spacing: -0.04em; color: #ececee; }
+.void__story { display: flex; flex-direction: column; gap: 34px; }
+.void__story p { font-size: 18px; line-height: 2; color: #cfd3da; }
+.void .fx-gate { border-color: #1d1d22; background: #08080a; }
+.void .fx-gate__desc { color: #9aa0a8; }
+
+/* AI 안경 화면 글씨 */
+.void__story .hud-line {
+  font-family: var(--font-mono); font-size: 15px; line-height: 1.9; letter-spacing: 0.02em;
+  color: #b8f7d4; text-shadow: 0 0 10px rgba(120, 255, 190, 0.35);
+}
+.void__story .hud-line--alert { color: #ffb3bf; text-shadow: 0 0 10px rgba(255, 42, 75, 0.45); }
+.void__story .sfx-line { text-align: center; font-family: var(--font-mono); font-size: 28px; letter-spacing: 0.3em; color: #d9d9dc; }
+
+/* AI 안경이 저장한 화면 */
+.hud { position: relative; border-radius: 4px; overflow: hidden; background: #050505; }
+.hud img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; filter: grayscale(0.4) brightness(0.8); }
+.hud__corner { position: absolute; width: 22px; height: 22px; border-color: rgba(184, 247, 212, 0.75); border-style: solid; }
+.hud__corner--tl { left: 12px; top: 12px; border-width: 2px 0 0 2px; }
+.hud__corner--tr { right: 12px; top: 12px; border-width: 2px 2px 0 0; }
+.hud__corner--bl { left: 12px; bottom: 12px; border-width: 0 0 2px 2px; }
+.hud__corner--br { right: 12px; bottom: 12px; border-width: 0 2px 2px 0; }
+.hud__meta { position: absolute; left: 44px; top: 14px; font-family: var(--font-mono); font-size: 11px; color: #b8f7d4; text-shadow: 0 0 6px rgba(0, 0, 0, 0.9); }
+.hud__meta .live-dot { margin-right: 6px; vertical-align: middle; }
+.hud__box { position: absolute; left: 47%; top: 26%; width: 13%; height: 52%; border: 2px solid #ff2a4b; box-shadow: 0 0 12px rgba(255, 42, 75, 0.5); }
+.hud__label { position: absolute; left: -2px; top: -22px; padding: 1px 6px; background: #ff2a4b; color: #0a0a0c; font-family: var(--font-mono); font-size: 11px; font-weight: 600; white-space: nowrap; }
+@keyframes hud-blink { 0%, 30% { opacity: 0; } 32%, 40% { opacity: 1; } 42%, 50% { opacity: 0; } 52%, 100% { opacity: 1; } }
+.fx-on .hud.fx-play .hud__box { animation: hud-blink 2.4s steps(1) both; }
+.void__story figcaption { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: #7d828b; }
+
+.void__exit { align-self: center; font-size: 13px; color: #6f747c; }
+.void__exit:hover { color: #cfd3da; }
+
+/* 칠흑 모드에서는 버튼을 숨기듯: ↻는 마우스를 올릴 때만, 연출 스위치는 구석에 흐리게 */
+.void .fx-replay { opacity: 0; transition: opacity .2s ease; }
+.void .fx-unit:hover .fx-replay, .void .fx-replay:focus-visible { opacity: 1; }
+@media (hover: none) { .void .fx-replay { opacity: 0.35; } }
+.void-toggle {
+  position: fixed; right: 16px; bottom: 16px; z-index: 20;
+  min-height: 36px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid #1d1d22;
+  background: rgba(8, 8, 10, 0.85); color: #6f747c;
+  font-family: var(--font-mono); font-size: 12px;
+}
+.void-toggle:hover, .void-toggle:focus-visible { color: #cfd3da; }
