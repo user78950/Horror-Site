@@ -9,7 +9,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+// 사진 올리기는 큰 요청을 받으므로 일반 JSON 처리보다 먼저 연결 (routes/uploads.js)
+app.use('/api/uploads', require('./routes/uploads'));
+
+app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- API (다음 단계) ----------
@@ -17,6 +20,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
+
+// 괴담 글 쓰기·보기·수정·삭제 (routes/posts.js)
+app.use('/api/posts', require('./routes/posts'));
 
 // 직접 넣은 효과음 목록: public/sounds 폴더의 소리 파일을 찾아 알려 줌
 // 이름·등급·설명은 public/sounds/sounds.json 에 적으면 반영되고, 없으면 파일 이름을 씀
@@ -49,9 +55,7 @@ app.get('/api/sounds', (req, res) => {
 });
 
 // 예시: 앞으로 만들 라우트
-// app.get('/api/posts', ...)              괴담 목록 (탭, 정렬)
-// app.get('/api/posts/:id', ...)          괴담 상세
-// app.post('/api/posts', ...)             괴담 작성 (로그인 필요)
+// (완료) /api/posts                      괴담 목록·보기·쓰기·수정·삭제 → routes/posts.js
 // app.post('/api/posts/:id/reactions', ...) 소름 / 덤덤
 // app.post('/api/posts/:id/comments', ...)  댓글
 // app.get('/api/movies', ...)             영화 순위

@@ -81,6 +81,9 @@ button { cursor: pointer; }
   outline-offset: 2px;
 }
 
+/* hidden 속성은 다른 스타일보다 항상 우선 */
+[hidden] { display: none !important; }
+
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
@@ -589,6 +592,12 @@ body.is-dim .story-text { color: #cfd6e0; }
 .format-bar__occult { height: 36px; padding: 0 12px; border-radius: var(--r-sm); border: 1px solid rgba(255, 42, 75, 0.3); background: rgba(255, 42, 75, 0.08); color: var(--blood-text); font-size: 13px; }
 
 .editor-body { padding: 28px; display: flex; flex-direction: column; gap: 18px; font-size: 17px; line-height: 1.85; outline: none; }
+.editor-body { position: relative; }
+.editor-body.is-empty::before {
+  content: attr(data-placeholder);
+  position: absolute; left: 28px; top: 28px; right: 28px;
+  color: var(--text-muted); pointer-events: none;
+}
 .editor-body hr { width: 100%; margin: 4px 0; border: 0; border-top: 1px solid rgba(255, 42, 75, 0.45); }
 .spoiler { padding: 0 4px; border-radius: 3px; background: var(--bg-hover); color: var(--bg-hover); cursor: pointer; transition: color .2s ease; }
 .spoiler:hover, .spoiler:focus { color: var(--text); }
@@ -899,3 +908,47 @@ body.void-page { background: #000; }
   font-family: var(--font-mono); font-size: 12px;
 }
 .void-toggle:hover, .void-toggle:focus-visible { color: #cfd3da; }
+
+/* 글 보기 (post.html) */
+.post-state { padding: 60px 24px; text-align: center; color: var(--text-muted); }
+.post-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.post-source { font-size: 13px; color: var(--text-muted); word-break: break-all; }
+.post-source a { color: var(--text-soft); }
+.article__body > p { font-size: var(--reader-size); line-height: 1.85; }
+.article__body h2, .article__body h3 { font-family: var(--font-head); line-height: 1.4; }
+.article__body blockquote { padding: 16px 20px; border-left: 2px solid var(--amber); background: var(--bg-raised); border-radius: 0 var(--r-md) var(--r-md) 0; }
+.article__body .spoiler { padding: 0 4px; border-radius: 3px; background: var(--bg-hover); color: var(--bg-hover); cursor: pointer; }
+.article__body .spoiler:hover, .article__body .spoiler:focus { color: var(--text); }
+.article__body .hud-line { font-family: var(--font-mono); font-size: 15px; color: #b8f7d4; }
+.article__body .sfx-line { text-align: center; font-family: var(--font-mono); font-size: 26px; letter-spacing: 0.3em; }
+.feed-live { display: flex; flex-direction: column; gap: 16px; }
+.feed-live__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.feed-live__list { display: flex; flex-direction: column; gap: 16px; }
+.feed-divider { margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+
+.text-input { width: 100%; padding: 12px 14px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--bg-input); font-size: 15px; outline: none; }
+.text-input:focus { border-color: var(--blood); }
+.field-group[hidden] { display: none; }
+.post-view { display: flex; flex-direction: column; gap: 24px; }
+.post-view[hidden] { display: none; }
+
+/* 툴바 안내 한 줄 */
+.format-msg { margin: 0; padding: 10px 16px; border-bottom: 1px solid var(--line); background: rgba(255, 153, 0, 0.08); color: var(--amber-text); font-size: 13px; }
+.fx-menu__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.fx-menu__title { font-family: var(--font-head); font-weight: 700; font-size: 15px; }
+.format-bar__occult[aria-expanded="true"] { background: rgba(255, 42, 75, 0.2); color: #fff; }
+.format-bar__occult:disabled { opacity: 0.5; cursor: progress; }
+
+/* 증거 사진 (에디터와 글 보기 공통) */
+.evidence-photo { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.evidence-photo img { max-width: 100%; border-radius: var(--r-md); background: var(--bg-abyss); }
+.evidence-photo figcaption { font-size: 13px; color: var(--text-muted); }
+.editor-body .evidence-photo[data-blur]::before {
+  content: '◆ 처음엔 흐리게 가린 사진 (독자가 눌러야 보임)';
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--amber-text);
+}
+.editor-body .evidence-photo[data-blur] img { filter: blur(3px) brightness(0.8); }
+.evidence-photo__frame { position: relative; border-radius: var(--r-md); overflow: hidden; }
+.evidence-photo.is-blurred img { filter: blur(16px) brightness(0.7); }
+.evidence-photo img { transition: filter .4s ease; }
+.evidence-photo__reveal { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: rgba(10, 10, 12, 0.85); }

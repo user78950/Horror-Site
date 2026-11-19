@@ -330,8 +330,10 @@
      ========================================================= */
   function initStory(root) {
     if (!root) return;
+    if (root.dataset.fxReady) return;              // 같은 본문을 두 번 준비하지 않게
     const blocks = Array.from(root.querySelectorAll('[data-fx]')).filter((b) => byId(b.dataset.fx));
     if (!blocks.length) return;
+    root.dataset.fxReady = '1';
 
     root.classList.add('fx-story');
     document.body.classList.toggle('fx-on', fxOn);

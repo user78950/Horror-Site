@@ -12,14 +12,50 @@ npm start
 
 브라우저에서 http://localhost:3000 을 열면 메인 홈 피드가 나옵니다.
 서버 없이 `public/index.html`을 바로 열어도 화면은 모두 보입니다.
-  set PORT=4000 && npm start 
- -> 3000 포트에서 열리지 않을 때
+
+## 괴담 쓰기 · 보기 · 수정 · 삭제 (실제 저장)
+
+글은 SQLite 데이터베이스(`data/horror.db`)에 저장됩니다. 처음 서버를 켤 때 파일과 표가 자동으로 만들어집니다.
+
+| 화면 | 하는 일 |
+| --- | --- |
+| `index.html` | 맨 위 "새로 올라온 괴담"에 저장된 글이 최신순으로 나옴. 분류 탭으로 걸러 보기 |
+| `write.html` | 새 글 쓰기. 쓰는 도중 내용이 브라우저에 자동 임시 저장되어, 창을 닫았다 열어도 이어 쓸 수 있음 |
+| `write.html?id=번호` | 저장된 글 수정 |
+| `post.html?id=번호` | 글 보기. 연출 재생, 수정·삭제 버튼 |
+
+| API | 설명 |
+| --- | --- |
+| `GET /api/posts?category=real&page=1` | 목록 (한 번에 20개) |
+| `GET /api/posts/:id` | 글 하나 (조회 수 +1) |
+| `POST /api/posts` | 새 글 |
+| `PUT /api/posts/:id` | 수정 |
+| `DELETE /api/posts/:id` | 삭제 |
+
+- **Node.js 22.13 이상**이 필요합니다. Node에 들어 있는 `node:sqlite`를 써서 따로 설치할 DB 프로그램이 없습니다. 서버를 켤 때 `ExperimentalWarning: SQLite is an experimental feature` 경고가 나오는데 동작에는 문제없습니다.
+- 처음 받았거나 패치를 적용한 뒤에는 `npm install`을 한 번 실행하세요 (본문 정리용 `sanitize-html`이 추가됨).
+- **본문 보안:** 서버가 저장 전에 허용한 태그·속성·연출 이름만 남기고 나머지(스크립트, 이상한 속성 등)는 지웁니다 (`lib/sanitize.js`).
+- **데이터 파일:** `data/` 폴더는 깃허브에 올라가지 않습니다. 글을 모두 지우고 처음부터 시작하려면 서버를 끄고 `data/horror.db*` 파일을 지우면 됩니다.
+- ⚠ **아직 로그인이 없어서 누구나 모든 글을 수정·삭제할 수 있습니다.** 다음 단계에서 로그인을 붙여 작성자 본인만 수정·삭제하게 바꿔야 하고, 그 전에는 공개 배포하지 마세요.
+- **작성 툴바:**
+  - **오컬트 실선:** 지금 문단 아래에 구분선을 넣어요.
+  - **블러 가림:** 드래그로 고른 글자를 가리고, 가린 글자 안에서 다시 누르면 풀려요.
+  - **증거 사진:** 사진을 올려 지금 문단 아래에 넣어요. 처음엔 흐리게 가릴지 고를 수 있어요.
+  - **공포 사운드:** 효과음만 모아 보여 줘요.
+  - **연출 넣기:** 전체 연출을 보여 줘요.
+- **사진 올리기:** `POST /api/uploads` (`routes/uploads.js`). 브라우저가 사진을 가로 1600px JPG로 줄이면서 촬영 위치(GPS) 같은 숨은 정보를 지우고, 서버가 한 번 더 지운 뒤 `public/uploads/`에 저장합니다. 이 폴더도 깃허브에 올라가지 않습니다. 본문에는 우리 서버에 올린 사진만 남고 외부 사진 주소는 지워집니다.
+- 썸네일 커버, 소름·댓글은 아직 화면만 있고 저장되지 않습니다.
 
 ## 폴더 구조
 
 ```
 horror-site/
-├── server.js          Express 서버 (public 폴더 제공 + API 자리)
+├── server.js          Express 서버 (public 폴더 제공 + API)
+├── db/database.js     SQLite 연결과 표 만들기
+├── routes/posts.js    괴담 글 API (목록·보기·쓰기·수정·삭제)
+├── routes/uploads.js 증거 사진 올리기 API
+├── lib/sanitize.js    본문 HTML 정리 (보안)
+├── data/              DB 파일이 생기는 곳 (깃허브에 안 올라감)
 ├── package.json
 └── public/
     ├── index.html     메인 홈 피드
@@ -29,6 +65,8 @@ horror-site/
     ├── css/style.css  공통 디자인 (색·글꼴 토큰, 헤더, 버튼, 카드, 페이지별 스타일)
     ├── js/app.js      공통 동작 (탭, 소름 버튼, 독서 모드, 에디터, 투표 등)
     ├── js/effects.js  연출 엔진 (점프스케어, 효과음, 글자 흔들림 등)
+    ├── js/posts.js    글 목록·보기·쓰기·수정·삭제 화면 동작
+    ├── post.html      저장된 글 보기
     └── images/        화면에 쓰인 사진
 ```
 

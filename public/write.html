@@ -39,11 +39,12 @@
     </a>
     <div class="editor-bar__title">
       <p class="editor-bar__kicker">GRIMOIRE TERMINAL // v4.02</p>
-      <h1 class="editor-bar__heading">새로운 공포 괴담 작성</h1>
+      <h1 class="editor-bar__heading" id="editor-heading">새로운 공포 괴담 작성</h1>
     </div>
-    <span class="mono muted" style="font-size: 12px" id="save-status" aria-live="polite">자동 저장됨 (방금 전)</span>
-    <a href="story.html" class="btn btn--ghost">미리보기</a>
-    <button type="submit" class="btn btn--primary">괴담 발행하기</button>
+    <span class="mono muted" style="font-size: 12px" id="save-status" aria-live="polite">새 글</span>
+    <button type="button" class="btn btn--text btn--sm" id="draft-clear" hidden>임시 글 지우기</button>
+    <a href="index.html" class="btn btn--ghost" id="cancel-link">취소</a>
+    <button type="submit" class="btn btn--primary" id="publish-btn">괴담 발행하기</button>
   </div>
 </div>
 
@@ -79,7 +80,7 @@
       <section class="editor-card">
         <div class="title-field">
           <label for="title" class="mono muted" style="font-size: 12px">제목 · 열람 시 긴장도 극대화 제목 추천</label>
-          <input id="title" name="title" type="text" maxlength="60" value="자정 3시마다 거실 거울 속 여자가 나를 향해 반 발짝씩">
+          <input id="title" name="title" type="text" maxlength="60" placeholder="제목을 입력하세요" autocomplete="off">
           <p class="title-field__count"><span id="title-count">33</span> / 60자</p>
         </div>
 
@@ -91,15 +92,22 @@
           <button type="button" class="format-bar__btn mono" data-cmd="formatBlock" data-arg="h2" style="font-size: 13px">H1</button>
           <button type="button" class="format-bar__btn mono" data-cmd="formatBlock" data-arg="h3" style="font-size: 13px">H2</button>
           <span class="format-bar__sep" aria-hidden="true"></span>
-          <button type="button" class="format-bar__occult" data-cmd="insertHorizontalRule">오컬트 실선</button>
-          <button type="button" class="format-bar__occult" data-spoiler>블러 가림</button>
-          <button type="button" class="format-bar__occult">증거 사진</button>
-          <button type="button" class="format-bar__occult">공포 사운드</button>
+          <button type="button" class="format-bar__occult" id="tool-line">오컬트 실선</button>
+          <button type="button" class="format-bar__occult" id="tool-spoiler">블러 가림</button>
+          <button type="button" class="format-bar__occult" id="tool-photo">증거 사진</button>
+          <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" hidden>
+          <button type="button" class="format-bar__occult" id="tool-sound" aria-expanded="false" aria-controls="fx-menu">공포 사운드</button>
           <span class="format-bar__sep" aria-hidden="true"></span>
           <button type="button" class="btn btn--primary btn--sm" id="fx-menu-btn" aria-expanded="false" aria-controls="fx-menu">연출 넣기</button>
         </div>
 
+        <p class="format-msg" id="format-msg" role="status" hidden></p>
+
         <div class="fx-menu" id="fx-menu" hidden>
+          <div class="fx-menu__head">
+            <p class="fx-menu__title" id="fx-menu-title">연출 고르기</p>
+            <button type="button" class="btn btn--text btn--sm" id="fx-show-all" hidden>전체 연출 보기</button>
+          </div>
           <p class="fx-menu__hint">커서가 있는 문단에 연출이 붙어요. 독자가 그 문단까지 스크롤하면 한 번 재생됩니다. 고르면 바로 미리보기가 나와요.</p>
           <div class="fx-menu__grid" id="fx-menu-grid"></div>
           <div class="fx-menu__foot">
@@ -109,31 +117,8 @@
           </div>
         </div>
 
-        <div class="editor-body" id="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="본문">
-          <p>그 집의 전 주인이 왜 침실 옷장 문을 전부 안쪽에서 못질해 두었는지, 이사 첫날엔 그저 낡은 집의 하자라고만 생각했다.</p>
-          <p>사건이 시작된 건 이사 후 닷새째 되던 새벽 3시 17분이었다.</p>
-          <p data-fx="knock" data-fx-label="효과음 · 노크 · 무료" data-fx-tier="free">욕실 환풍기 쪽에서 ‘탁, 탁, 탁’ 하는 아주 메마른 소리가 나기 시작했다. 마치 어린아이의 마른 손톱으로 타일을 긁는 듯한 소리였다. 잠에서 깬 나는 휴대폰 플래시를 켜고 거실을 가로질렀다. 거실 중앙에 세워둔 대형 전신거울 앞을 지나칠 때, 거울 속에 비친 내 그림자의 목이 미세하게 꺾여 있는 것을 보았다.</p>
-          <hr>
-          <p>더 끔찍한 건 그게 아니었다.<br>거울 속 내 등 뒤 어둠 속에, 전혀 모르는 여자의 젖은 정수리가 바닥에 달라붙은 채 나를 올려다보고 있었다.</p>
-          <p class="blood strong" data-fx="shake" data-fx-label="글자 흔들림 · 유료" data-fx-tier="paid">“너, 지금 보고 있지?”</p>
-          <p>귀 바로 뒤에서 축축한 입김과 함께 낮은 속삭임이 울려 퍼졌다. <span class="spoiler" tabindex="0" title="스포일러 블러 (마우스를 올리면 보임)">거울 속 그 여자의 입꼬리가 귀밑까지 찢어지며 반 발짝 내 발등 쪽으로 손을 뻗어왔다.</span></p>
-          <div class="attach" contenteditable="false">
-            <img src="images/evidence-hall.jpg" alt="첨부된 현장 사진 미리보기">
-            <div class="attach__info">
-              <p class="mono" style="font-size: 12px"><span class="blood strong">[현장 첨부 사진]</span> <span class="muted">evidence_mirror_0317AM.jpg</span></p>
-              <p>새벽 3시 18분 촬영된 거실 거울 하단 왜곡 현상 원본</p>
-              <p class="amber" style="font-size: 12px">소름 유발 인증 완료</p>
-            </div>
-            <button type="button" class="btn btn--text btn--sm" data-remove-attach>삭제</button>
-          </div>
-          <div class="attach attach--audio" contenteditable="false">
-            <span class="attach__play" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="#0a0a0c"><path d="M7 4 L20 12 L7 20 Z"/></svg></span>
-            <div class="attach__info">
-              <p style="font-weight: 600">배경 앰비언스: [심야의 괘종시계와 숨소리.mp3]</p>
-              <p class="muted" style="font-size: 12px">독자가 스크롤을 내릴 때 잔잔하게 자동 재생됩니다 (심장박동 주의)</p>
-            </div>
-            <span class="mono muted" style="font-size: 12px">01:42</span>
-          </div>
+        <div class="editor-body" id="editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="본문" data-placeholder="여기에 괴담을 써 주세요. 문단을 나누려면 Enter를 누르세요.">
+          <p><br></p>
         </div>
 
         <div class="status-bar" aria-live="polite">
@@ -141,16 +126,24 @@
           <span>예상 완독 시간: <strong id="read-time">약 1분 30초</strong></span>
           <span>예상 공포 강도: <strong class="blood">극상 (Nightmare Tier)</strong></span>
           <span>연출: <strong id="fx-count">2개</strong></span>
-          <span class="push">마크다운 문법 지원</span>
+        </div>
+      </section>
+
+      <section class="panel" style="padding: 20px 24px; gap: 14px">
+        <div class="field-group">
+          <label for="author" class="field-label">작성자 닉네임 (로그인 기능이 생기기 전까지 임시)</label>
+          <input id="author" name="author" type="text" maxlength="20" placeholder="예: 심야괴담러" autocomplete="nickname" class="text-input">
+        </div>
+        <div class="field-group" id="source-row" hidden>
+          <label for="source-url" class="field-label">원문 주소 (해외 번역 글은 필수)</label>
+          <input id="source-url" name="source_url" type="url" placeholder="https://www.reddit.com/r/nosleep/..." class="text-input">
+          <p class="muted" style="font-size: 12px">원작자에게 번역 허락을 받은 글만 올려 주세요. <a href="guidelines.html">가이드라인 보기</a></p>
         </div>
       </section>
 
       <section class="panel" style="padding: 20px 24px">
         <label for="tag-input" class="field-label">공포 태그 (쉼표로 구분하여 최대 5개)</label>
         <div class="tag-input" id="tag-box">
-          <span class="tag">#거울괴담<button type="button" aria-label="#거울괴담 태그 삭제">×</button></span>
-          <span class="tag">#새벽3시<button type="button" aria-label="#새벽3시 태그 삭제">×</button></span>
-          <span class="tag">#자취방실화<button type="button" aria-label="#자취방실화 태그 삭제">×</button></span>
           <input id="tag-input" type="text" placeholder="태그 입력 후 쉼표 또는 Enter">
         </div>
       </section>
@@ -208,5 +201,6 @@
 
 <script src="js/effects.js"></script>
 <script src="js/app.js"></script>
+<script src="js/posts.js"></script>
 </body>
 </html>

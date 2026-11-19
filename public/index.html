@@ -99,6 +99,20 @@
     <!-- 괴담 피드 -->
     <section class="layout__main" aria-label="괴담 피드">
 
+      <!-- 서버(DB)에 저장된 진짜 괴담 목록: posts.js 가 채움 -->
+      <section class="feed-live" id="feed-live" aria-label="새로 올라온 괴담">
+        <div class="feed-live__head">
+          <h2 class="panel__title">새로 올라온 괴담</h2>
+          <a href="write.html" class="btn btn--ghost btn--sm">+ 괴담 쓰기</a>
+        </div>
+        <p class="note-box note-box--amber" id="feed-live-note" role="status" hidden></p>
+        <div class="feed-live__list" id="feed-live-list" aria-live="polite">
+          <p class="muted">불러오는 중…</p>
+        </div>
+      </section>
+
+      <p class="feed-divider">예시 괴담 · 디자인과 연출을 보여 주는 샘플이에요</p>
+
       <article class="post-card">
         <div class="post-card__meta">
           <span class="chip chip--red">[창작 단편]</span>
@@ -343,5 +357,6 @@
 </footer>
 
 <script src="js/app.js"></script>
+<script src="js/posts.js"></script>
 </body>
 </html>
