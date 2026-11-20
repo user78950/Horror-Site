@@ -66,6 +66,26 @@ if (!userColumns.includes('firebase_uid')) db.exec('ALTER TABLE users ADD COLUMN
 if (!userColumns.includes('email_verified')) db.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0');
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_firebase ON users (firebase_uid)');
 
+// 소름·덤덤 반응: 한 사람이 한 글에 하나만 (UNIQUE)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS reactions (
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    post_id     INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    type        TEXT    NOT NULL CHECK (type IN ('like', 'dislike')),   -- like = 소름, dislike = 덤덤
+    created_at  TEXT    NOT NULL,
+    PRIMARY KEY (user_id, post_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_reactions_post ON reactions (post_id);
+`);
+
+// 글마다 소름·덤덤 수와 베스트 여부를 함께 저장 (목록을 빠르게 정렬하려고)
+const postCols = db.prepare('PRAGMA table_info(posts)').all().map((c) => c.name);
+if (!postCols.includes('like_count')) db.exec('ALTER TABLE posts ADD COLUMN like_count INTEGER NOT NULL DEFAULT 0');
+if (!postCols.includes('dislike_count')) db.exec('ALTER TABLE posts ADD COLUMN dislike_count INTEGER NOT NULL DEFAULT 0');
+if (!postCols.includes('is_best')) db.exec('ALTER TABLE posts ADD COLUMN is_best INTEGER NOT NULL DEFAULT 0');
+if (!postCols.includes('best_at')) db.exec('ALTER TABLE posts ADD COLUMN best_at TEXT');
+db.exec('CREATE INDEX IF NOT EXISTS idx_posts_best ON posts (is_best, best_at)');
+
 // 만료된 로그인 정리
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString());
 

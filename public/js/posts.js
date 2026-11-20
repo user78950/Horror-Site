@@ -76,6 +76,7 @@
     const card = (p) => {
       const art = el('article', 'post-card');
       const meta = el('div', 'post-card__meta');
+      if (p.isBest) meta.append(el('span', 'chip best-chip', 'BEST'));
       meta.append(el('span', 'chip ' + (CATEGORY_CHIP[p.category] || ''), '[' + (CATEGORY[p.category] || '괴담') + ']'));
       if (p.effectsCount) meta.append(el('span', 'chip chip--amber', '연출 ' + p.effectsCount + '개'));
       if (p.warnings.includes('faint')) meta.append(el('span', 'chip', '심약자 주의'));
@@ -87,6 +88,7 @@
       h.append(a);
       text.append(h, el('p', 'post-card__excerpt', p.excerpt));
       const foot = el('div', 'post-card__foot');
+      foot.append(el('span', 'shudder-btn', '소름 ' + p.likes.toLocaleString('ko-KR')));
       if (p.tags.length) foot.append(el('span', 'muted', p.tags.join(' ')));
       foot.append(el('span', 'stat', '조회 ' + p.views.toLocaleString('ko-KR')));
       art.append(meta, text, foot);
@@ -105,23 +107,40 @@
       return box;
     };
 
-    const load = (category) => {
+    // 지금 보고 있는 조건: 분류, 정렬(최신순/소름 많은순), 베스트만
+    const view = { category: 'all', sort: 'new', best: false };
+    const EMPTY = { best: '아직 명예의 전당에 오른 괴담이 없어요. 소름을 눌러 첫 베스트를 뽑아 주세요.', category: '이 분류에는 아직 올라온 괴담이 없어요.', all: '아직 올라온 괴담이 없어요. 첫 번째 이야기를 남겨 주세요.' };
+
+    const load = () => {
       list.setAttribute('aria-busy', 'true');
-      const q = category && category !== 'all' ? '?category=' + encodeURIComponent(category) : '';
-      api('GET', '/api/posts' + q)
+      const q = new URLSearchParams();
+      if (view.category !== 'all') q.set('category', view.category);
+      if (view.best) q.set('best', '1');
+      else if (view.sort === 'hot') q.set('sort', 'hot');
+      api('GET', '/api/posts' + (q.toString() ? '?' + q : ''))
         .then(({ posts }) => {
           list.textContent = '';
-          if (!posts.length) list.append(empty(category && category !== 'all' ? '이 분류에는 아직 올라온 괴담이 없어요.' : '아직 올라온 괴담이 없어요. 첫 번째 이야기를 남겨 주세요.', true));
+          if (!posts.length) list.append(empty(view.best ? EMPTY.best : view.category !== 'all' ? EMPTY.category : EMPTY.all, !view.best));
           else posts.forEach((p) => list.append(card(p)));
         })
         .catch((err) => { list.textContent = ''; list.append(empty(err.message, false)); })
         .then(() => list.removeAttribute('aria-busy'));
     };
 
-    // 위쪽 분류 탭과 연결 (실시간 인기·명예의 전당은 반응 기능이 생기기 전까지 전체로 보여 줌)
-    const TAB_TO_CATEGORY = { all: 'all', hot: 'all', hof: 'all', intl: 'intl', real: 'real', novel: 'novel', film: 'film' };
-    $$('[data-tab]').forEach((btn) => btn.addEventListener('click', () => load(TAB_TO_CATEGORY[btn.dataset.tab] || 'all')));
-    load(TAB_TO_CATEGORY[params.get('tab')] || 'all');
+    // 분류 탭: 실시간 인기 = 소름 많은순, 명예의 전당 = 베스트만
+    const applyTab = (tab) => {
+      view.best = tab === 'hof';
+      view.category = ['intl', 'real', 'novel', 'film'].includes(tab) ? tab : 'all';
+      if (tab === 'hot') setSort('hot');
+    };
+    const setSort = (sort) => {
+      view.sort = sort;
+      $$('[data-sort]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sort === sort)));
+    };
+    $$('[data-tab]').forEach((btn) => btn.addEventListener('click', () => { applyTab(btn.dataset.tab); load(); }));
+    $$('[data-sort]').forEach((btn) => btn.addEventListener('click', () => { setSort(btn.dataset.sort); load(); }));
+    applyTab(params.get('tab') || 'all');
+    load();
   }
 
   /* =========================================================
@@ -148,6 +167,7 @@
           $('#post-title').textContent = post.title;
 
           const chips = $('#post-chips');
+          if (post.isBest) chips.append(el('span', 'chip best-chip', 'BEST · 명예의 전당'));
           chips.append(el('span', 'chip ' + (CATEGORY_CHIP[post.category] || ''), CATEGORY[post.category] || '괴담'));
           post.warnings.forEach((w) => chips.append(el('span', 'chip chip--red', WARNING[w] || w)));
           if (post.effectsCount) chips.append(el('span', 'chip chip--amber', '연출 포함'));
@@ -195,8 +215,60 @@
           state.hidden = true;
 
           if (window.HorrorFX) HorrorFX.loadCustomSounds().then(() => HorrorFX.initStory(article));
+          setupReaction(post);
         })
         .catch((err) => fail(err.message));
+
+      // 소름·덤덤
+      function setupReaction(post) {
+        const likeBtn = $('#react-like');
+        const dislikeBtn = $('#react-dislike');
+        const note = $('#reaction-note');
+        const sub = $('#reaction-sub');
+        let state = { likes: post.likes, dislikes: post.dislikes, isBest: post.isBest, myReaction: post.myReaction, bestThreshold: post.bestThreshold };
+
+        const paint = () => {
+          $('#like-count').textContent = state.likes.toLocaleString('ko-KR');
+          $('#dislike-count').textContent = state.dislikes.toLocaleString('ko-KR');
+          likeBtn.setAttribute('aria-pressed', String(state.myReaction === 'like'));
+          dislikeBtn.setAttribute('aria-pressed', String(state.myReaction === 'dislike'));
+          const left = state.bestThreshold - (state.likes - state.dislikes);
+          sub.textContent = state.isBest
+            ? '명예의 전당에 오른 괴담이에요'
+            : '베스트까지 소름 ' + Math.max(1, left) + '점 남았어요 (소름 − 덤덤 ' + state.bestThreshold + '점 이상)';
+        };
+        paint();
+
+        if (post.isMine) {
+          likeBtn.disabled = true;
+          dislikeBtn.disabled = true;
+          note.textContent = '내 글에는 반응할 수 없어요. 다른 사람들의 소름을 기다려 보세요.';
+          return;
+        }
+
+        const send = async (type) => {
+          const user = window.HorrorAuth ? await HorrorAuth.ready : null;
+          if (!user) { location.href = HorrorAuth.loginUrl(); return; }
+          const nextType = state.myReaction === type ? null : type;   // 같은 버튼을 다시 누르면 취소
+          likeBtn.disabled = true;
+          dislikeBtn.disabled = true;
+          note.textContent = '';
+          try {
+            const res = await api('POST', '/api/posts/' + post.id + '/reaction', { type: nextType });
+            const becameBest = res.isBest && !state.isBest;
+            state = res;
+            paint();
+            if (becameBest) note.textContent = '이 괴담이 명예의 전당에 올랐어요!';
+          } catch (err) {
+            note.textContent = err.message;
+          } finally {
+            likeBtn.disabled = false;
+            dislikeBtn.disabled = false;
+          }
+        };
+        likeBtn.addEventListener('click', () => send('like'));
+        dislikeBtn.addEventListener('click', () => send('dislike'));
+      }
 
       $('#post-delete').addEventListener('click', () => {
         if (!confirm('이 괴담을 삭제할까요? 삭제하면 되돌릴 수 없어요.')) return;

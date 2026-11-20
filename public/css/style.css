@@ -982,3 +982,10 @@ body.void-page { background: #000; }
 .auth-msg--ok { color: #8ee0b5; }
 .verify-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .verify-banner__text { flex: 1 1 280px; }
+
+/* 소름·덤덤 (post.html) */
+.meh-btn[aria-pressed="true"] { border-color: var(--text-soft); background: var(--bg-hover); color: #fff; }
+.shudder-big:disabled, .meh-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.reaction__note { min-height: 1.2em; font-size: 13px; color: var(--amber-text); }
+.reaction__note:empty { min-height: 0; }
+.best-chip { background: var(--amber); color: var(--bg-abyss); }
