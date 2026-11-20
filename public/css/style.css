@@ -973,3 +973,12 @@ body.void-page { background: #000; }
 .auth-card__foot a { color: var(--blood-text); }
 .user .avatar { display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--blood-text); }
 .login-gate { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+/* 구글 로그인 버튼, 구분선, 성공 안내 */
+.btn--google { background: #ffffff; color: #1f1f1f; border-color: #dadce0; font-family: var(--font-body); font-weight: 600; }
+.btn--google:hover { background: #f2f2f2; color: #1f1f1f; }
+.auth-divider { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--line-strong); }
+.auth-msg--ok { color: #8ee0b5; }
+.verify-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.verify-banner__text { flex: 1 1 280px; }
