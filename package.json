@@ -4,11 +4,12 @@
   "description": "무서운 게 딱좋아! — 공포 콘텐츠 커뮤니티 MVP",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --watch --env-file-if-exists=.env server.js"
   },
   "dependencies": {
     "express": "^4.21.2",
+    "firebase": "^13.4.0",
     "sanitize-html": "^2.18.2"
   },
   "engines": {

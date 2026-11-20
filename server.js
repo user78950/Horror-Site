@@ -9,6 +9,12 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 로그인: 모든 요청에서 지금 로그인한 사람을 확인하고, API는 다른 사이트에서 온 쓰기 요청을 거절
+const auth = require('./lib/auth');
+app.set('trust proxy', 1);   // 배포 서버 앞단(프록시)을 거쳐도 접속자 IP를 바르게 읽도록
+app.use(auth.loadUser);
+app.use('/api', auth.sameOriginOnly);
+
 // 사진 올리기는 큰 요청을 받으므로 일반 JSON 처리보다 먼저 연결 (routes/uploads.js)
 app.use('/api/uploads', require('./routes/uploads'));
 
@@ -20,6 +26,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
+
+// 회원가입·로그인 (routes/auth.js)
+app.use('/api/auth', require('./routes/auth'));
 
 // 괴담 글 쓰기·보기·수정·삭제 (routes/posts.js)
 app.use('/api/posts', require('./routes/posts'));
