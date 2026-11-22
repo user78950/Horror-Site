@@ -1,5 +1,5 @@
 /* =========================================================
-   무서운 게 딱좋아! — Firebase 로그인 (브라우저 쪽)
+   심야 archive — Firebase 로그인 (브라우저 쪽)
    login.html, signup.html, write.html 에서 불러옵니다.
 
    흐름: Firebase로 로그인 → 증명서(ID 토큰)를 우리 서버에 보냄

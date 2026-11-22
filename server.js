@@ -1,4 +1,4 @@
-// 무서운 게 딱좋아! — Express 서버
+// 심야 archive — Express 서버
 // 지금은 public 폴더의 화면을 그대로 보여 줍니다.
 // 다음 단계에서 아래 "API" 자리에 SQLite와 연결된 라우트를 붙이면 됩니다.
 
@@ -82,5 +82,5 @@ app.get('/api/sounds', (req, res) => {
 // app.post('/api/movies/:id/ratings', ...)  무서움 점수 투표
 
 app.listen(PORT, () => {
-  console.log(`무서운 게 딱좋아! 서버 실행 중: http://localhost:${PORT}`);
+  console.log(`심야 archive 서버 실행 중: http://localhost:${PORT}`);
 });

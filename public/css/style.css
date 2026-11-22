@@ -1,5 +1,5 @@
 /* =========================================================
-   무서운 게 딱좋아! — 공통 스타일 (Nocturnal Echoes 디자인 시스템)
+   심야 archive — 공통 스타일 (Nocturnal Echoes 디자인 시스템)
    ========================================================= */
 
 /* ---------- 1. 디자인 토큰 ---------- */
@@ -1056,3 +1056,7 @@ body.void-reading .panel { background: #08080a; border-color: #1a1a1f; }
 body.void-reading .fx-gate { border-color: #1d1d22; background: #08080a; }
 body.void-reading .fx-replay { opacity: 0; transition: opacity .2s ease; }
 body.void-reading .fx-unit:hover .fx-replay, body.void-reading .fx-replay:focus-visible { opacity: 1; }
+
+/* 사이트 이름 '심야 archive': 영어 부분은 고정폭 소문자로 */
+.logo__name { white-space: nowrap; }
+.logo__en { font-family: var(--font-mono); font-weight: 600; font-size: 0.82em; letter-spacing: 0.04em; text-transform: lowercase; opacity: 0.9; }

@@ -1,4 +1,4 @@
-# 무서운 게 딱좋아! — MVP 프론트엔드
+# 심야 archive — MVP 프론트엔드
 
 공포 매니아를 위한 괴담·공포영화 커뮤니티의 화면 4개를 실제 개발용 파일로 정리한 프로젝트입니다.
 기술 스택은 프로젝트 컨텍스트와 같습니다: Static HTML · Pure CSS · Vanilla JS · Node/Express (다음 단계에서 SQLite).

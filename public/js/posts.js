@@ -1,5 +1,5 @@
 /* =========================================================
-   무서운 게 딱좋아! — 괴담 글 쓰기·보기·수정·삭제 (posts.js)
+   심야 archive — 괴담 글 쓰기·보기·수정·삭제 (posts.js)
    서버의 /api/posts 와 주고받습니다.
      - index.html : "새로 올라온 괴담" 목록
      - post.html  : 글 보기 + 수정·삭제 버튼
@@ -281,7 +281,7 @@
     } else {
       api('GET', '/api/posts/' + id)
         .then(({ post }) => {
-          document.title = post.title + ' · 무서운 게 딱좋아!';
+          document.title = post.title + ' · 심야 archive';
           $('#post-title').textContent = post.title;
 
           const chips = $('#post-chips');

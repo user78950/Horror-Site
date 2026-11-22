@@ -1,4 +1,4 @@
-// 무서운 게 딱좋아! — SQLite 연결
+// 심야 archive — SQLite 연결
 // Node.js에 들어 있는 node:sqlite를 씁니다 (별도 설치·빌드 필요 없음).
 // 실행하면 "SQLite is an experimental feature" 경고가 한 줄 나오는데, 동작에는 문제없습니다.
 

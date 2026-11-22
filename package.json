@@ -1,7 +1,7 @@
 {
-  "name": "museoun-ge-ttak-joa",
+  "name": "simya-archive",
   "version": "0.1.0",
-  "description": "무서운 게 딱좋아! — 공포 콘텐츠 커뮤니티 MVP",
+  "description": "심야 archive — 공포 콘텐츠 커뮤니티 MVP",
   "main": "server.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
