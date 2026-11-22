@@ -52,6 +52,7 @@ function toPost(row, full, user) {
     updatedAt: row.updated_at
   };
   if (full) {
+    post.display = row.display === 'void' ? 'void' : 'normal';
     post.canEdit = canEdit(row, user);
     post.content = row.content;
     post.sourceUrl = row.source_url || '';
@@ -88,9 +89,11 @@ function validate(body) {
     .map((t) => (t.startsWith('#') ? t : '#' + t).slice(0, 20))
     .slice(0, 5);
 
+  const display = body.display === 'void' ? 'void' : 'normal';
+
   return {
     value: {
-      category, title, content, sourceUrl,
+      category, title, content, sourceUrl, display,
       excerpt: text.slice(0, 140),
       warnings: JSON.stringify(warnings),
       tags: JSON.stringify(tags),
@@ -147,9 +150,9 @@ router.post('/', requireVerified, (req, res) => {
   if (error) return res.status(400).json({ error });
   const now = new Date().toISOString();
   const result = db.prepare(
-    `INSERT INTO posts (category, title, content, excerpt, author, user_id, source_url, warnings, tags, effects, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(v.category, v.title, v.content, v.excerpt, req.user.nickname, req.user.id, v.sourceUrl || null, v.warnings, v.tags, v.effects, now, now);
+    `INSERT INTO posts (category, title, content, excerpt, author, user_id, source_url, warnings, tags, effects, display, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(v.category, v.title, v.content, v.excerpt, req.user.nickname, req.user.id, v.sourceUrl || null, v.warnings, v.tags, v.effects, v.display, now, now);
   res.status(201).json({ id: Number(result.lastInsertRowid) });
 });
 
@@ -169,9 +172,9 @@ router.put('/:id', requireAuth, (req, res) => {
   if (error) return res.status(400).json({ error });
   const result = db.prepare(
     `UPDATE posts SET category = ?, title = ?, content = ?, excerpt = ?, source_url = ?,
-                      warnings = ?, tags = ?, effects = ?, updated_at = ?
+                      warnings = ?, tags = ?, effects = ?, display = ?, updated_at = ?
       WHERE id = ?`
-  ).run(v.category, v.title, v.content, v.excerpt, v.sourceUrl || null, v.warnings, v.tags, v.effects, new Date().toISOString(), id);
+  ).run(v.category, v.title, v.content, v.excerpt, v.sourceUrl || null, v.warnings, v.tags, v.effects, v.display, new Date().toISOString(), id);
   if (result.changes === 0) return res.status(404).json({ error: '글을 찾을 수 없어요. 삭제되었을 수 있어요.' });
   res.json({ id });
 });
@@ -230,3 +233,4 @@ router.post('/:id/reaction', requireVerified, (req, res) => {
 });
 
 module.exports = router;
+module.exports.validate = validate;

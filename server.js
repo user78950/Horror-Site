@@ -35,6 +35,9 @@ const { postComments, comments } = require('./routes/comments');
 app.use('/api/posts/:postId/comments', postComments);
 app.use('/api/comments', comments);
 
+// 홈 화면 숫자 (routes/stats.js)
+app.use('/api/stats', require('./routes/stats'));
+
 // 공포영화 순위·무서움 점수 (routes/movies.js)
 app.use('/api/movies', require('./routes/movies'));
 

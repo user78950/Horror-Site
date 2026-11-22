@@ -130,6 +130,12 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_movie_ratings_movie ON movie_ratings (movie_id);
 `);
 
+// 글 보여 주는 방식: normal(기본) / void(칠흑 모드: 검은 바탕에 제목·글·사진만)
+if (!db.prepare('PRAGMA table_info(posts)').all().some((c) => c.name === 'display')) {
+  db.exec("ALTER TABLE posts ADD COLUMN display TEXT NOT NULL DEFAULT 'normal'");
+}
+db.exec('CREATE INDEX IF NOT EXISTS idx_reactions_created ON reactions (created_at)');
+
 // 만료된 로그인 정리
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString());
 

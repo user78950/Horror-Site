@@ -455,7 +455,7 @@
     stopDrone
   };
 
-  // story.html: 본문(#article)에 연출이 있으면 자동으로 시작
+  // 본문(#article)에 연출이 있으면 자동으로 시작 (post.html 은 posts.js 가 글을 불러온 뒤 시작)
   // 직접 넣은 효과음 목록을 먼저 불러온 뒤 시작 (본문에 "snd-..." 연출이 있을 수 있으므로)
   document.addEventListener('DOMContentLoaded', () => {
     loadCustomSounds().then(() => initStory(document.getElementById('article')));

@@ -10,15 +10,21 @@ const REQUIRED = [
   'data/.gitignore',
   'db/database.js',
   'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js',
-  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'scripts/seed-movies.js',
+  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
-  'public/story.html', 'public/story-glasses.html', 'public/movies.html', 'public/guidelines.html',
+  'public/movies.html', 'public/guidelines.html',
   'public/css/style.css',
   'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js',
-  'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg', 'public/images/hero-elevator.jpg',
-  'public/images/post-doll.jpg', 'public/images/post-letter.jpg', 'public/images/post-phone.jpg', 'public/images/post-talisman.jpg',
+  'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg',
   'public/sounds/sounds.json', 'public/sounds/sample-bell.wav',
   'public/uploads/.gitignore'
+];
+
+// 이제 쓰지 않아서 지워야 하는 예전 파일 (zip 으로 덮어써도 저절로 지워지지 않음)
+const OBSOLETE = [
+  'public/story.html', 'public/story-glasses.html',
+  'public/images/hero-elevator.jpg', 'public/images/post-doll.jpg', 'public/images/post-letter.jpg',
+  'public/images/post-phone.jpg', 'public/images/post-talisman.jpg'
 ];
 
 // 파일이 있어도 예전 버전이면 안 되는 것들: [파일, 들어 있어야 할 글자, 설명]
@@ -39,7 +45,9 @@ const CONTENT_CHECKS = [
   ['public/post.html', 'cm-form', '글 보기 화면에 댓글 영역이 있어야 해요'],
   ['server.js', "app.use('/api/comments'", '댓글 API 가 연결되어 있어야 해요'],
   ['server.js', "app.use('/api/movies'", '영화 API 가 연결되어 있어야 해요'],
-  ['public/movies.html', 'js/movies.js', '영화 페이지가 새 버전이어야 해요']
+  ['public/movies.html', 'js/movies.js', '영화 페이지가 새 버전이어야 해요'],
+  ['public/index.html', 'home-hero', '홈 화면이 실제 데이터 버전이어야 해요'],
+  ['server.js', "app.use('/api/stats'", '홈 숫자 API 가 연결되어 있어야 해요']
 ];
 
 const root = process.cwd();
@@ -54,6 +62,13 @@ if (missing.length) {
   missing.forEach((f) => console.log('    ' + f));
 } else {
   console.log('✓ 있어야 할 파일 ' + REQUIRED.length + '개가 모두 있어요.');
+}
+
+const leftovers = OBSOLETE.filter((f) => fs.existsSync(path.join(root, f)));
+if (leftovers.length) {
+  problems += leftovers.length;
+  console.log('\n✗ 이제 쓰지 않는 예전 파일이 남아 있어요. 지워 주세요:');
+  leftovers.forEach((f) => console.log('    ' + f));
 }
 
 const stale = CONTENT_CHECKS.filter(([f, text]) => {

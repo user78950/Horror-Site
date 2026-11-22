@@ -419,7 +419,7 @@ button { cursor: pointer; }
 .chart-axis strong { color: var(--text); font-weight: 600; }
 
 /* =========================================================
-   괴담 상세 뷰어 (story.html)
+   괴담 상세 뷰어 (post.html 본문)
    ========================================================= */
 body.is-dim { background: #050506; }
 body.is-dim .layout__side { opacity: 0.25; }
@@ -857,7 +857,7 @@ body.is-dim .story-text { color: #cfd6e0; }
 
 
 /* =========================================================
-   칠흑 모드 괴담 (story-glasses.html): 검은 바탕에 제목·글·사진만
+   칠흑 모드 기본 스타일 (글자·사진 색, post.html 의 void-reading 과 함께 씀)
    ========================================================= */
 body.void-page { background: #000; }
 .void { max-width: 680px; margin: 0 auto; padding: 120px 24px 140px; display: flex; flex-direction: column; gap: 44px; }
@@ -1016,3 +1016,43 @@ body.void-page { background: #000; }
 .mv-admin-actions { display: flex; gap: 4px; margin-left: auto; }
 .mv-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .mv-empty-score { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+
+/* 홈 맨 위 배너 (실제 베스트 글) */
+.home-hero {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 36px 40px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: radial-gradient(ellipse at 0% 0%, rgba(255, 42, 75, 0.18), rgba(18, 18, 22, 0) 60%), var(--bg-card);
+  box-shadow: 0 0 40px -12px rgba(255, 42, 75, 0.35);
+}
+.home-hero__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.home-hero__label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; color: var(--blood-text); }
+.home-hero__title { font-family: var(--font-head); font-weight: 900; font-size: clamp(26px, 3.4vw, 40px); line-height: 1.25; letter-spacing: -0.02em; }
+.home-hero__title a { text-decoration: none; }
+.home-hero__excerpt { max-width: 760px; font-size: 16px; line-height: 1.75; color: var(--text-body); }
+.home-hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 4px; }
+@media (max-width: 720px) { .home-hero { padding: 24px 20px; } }
+
+/* 칠흑 모드로 보는 글 (post.html, 작성자가 '칠흑 모드' 선택) */
+.void-exit { display: none; }
+body.void-reading { background: #000; }
+body.void-reading .site-header,
+body.void-reading .site-footer,
+body.void-reading #post-chips,
+body.void-reading .post-actions { display: none; }
+body.void-reading .page { max-width: 720px !important; padding-top: 72px; }
+body.void-reading .void-exit { display: inline-block; align-self: flex-start; font-size: 13px; color: #6f747c; text-decoration: none; }
+body.void-reading .void-exit:hover { color: #cfd3da; }
+body.void-reading .article { background: transparent; border: 0; }
+body.void-reading .article__head { padding: 0 0 32px; border: 0; }
+body.void-reading .article__title { font-weight: 900; font-size: clamp(40px, 7vw, 68px); line-height: 1.08; letter-spacing: -0.04em; color: #ececee; }
+body.void-reading .article__meta { color: #6f747c; }
+body.void-reading .article__body { padding: 0; gap: 34px; }
+body.void-reading .article__body > p { line-height: 2; color: #cfd3da; }
+body.void-reading .article__body .hud-line { color: #b8f7d4; text-shadow: 0 0 10px rgba(120, 255, 190, 0.35); }
+body.void-reading .article__body .hud-line--alert { color: #ffb3bf; text-shadow: 0 0 10px rgba(255, 42, 75, 0.45); }
+body.void-reading .panel { background: #08080a; border-color: #1a1a1f; }
+body.void-reading .fx-gate { border-color: #1d1d22; background: #08080a; }
+body.void-reading .fx-replay { opacity: 0; transition: opacity .2s ease; }
+body.void-reading .fx-unit:hover .fx-replay, body.void-reading .fx-replay:focus-visible { opacity: 1; }

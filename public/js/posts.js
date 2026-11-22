@@ -143,6 +143,104 @@
     applyTab(params.get('tab') || 'all');
     load();
 
+    // 맨 위 배너: 베스트 1위 → 없으면 가장 인기 있는 글 → 없으면 최신 글 → 글이 없으면 첫 글 안내
+    const hero = $('#home-hero');
+    if (hero) {
+      (async () => {
+        let label = '오늘 밤 명예의 전당 1위';
+        let p = null;
+        try {
+          p = (await api('GET', '/api/posts?best=1')).posts[0] || null;
+          if (!p) { label = '지금 가장 소름 돋는 괴담'; p = (await api('GET', '/api/posts?sort=hot')).posts.find((x) => x.likes > 0) || null; }
+          if (!p) { label = '방금 올라온 괴담'; p = (await api('GET', '/api/posts')).posts[0] || null; }
+        } catch (e) { p = null; }
+        hero.textContent = '';
+        if (!p) {
+          hero.append(el('p', 'home-hero__label', '아직 조용한 밤이에요'));
+          hero.append(el('h1', 'home-hero__title', '첫 번째 괴담의 주인공이 되어 주세요'));
+          hero.append(el('p', 'home-hero__excerpt', '직접 겪은 이야기도, 지어낸 이야기도 좋아요. 연출을 넣으면 더 오싹해져요.'));
+          const go = el('a', 'btn btn--primary btn--lg', '첫 괴담 쓰기');
+          go.href = 'write.html';
+          hero.append(go);
+          return;
+        }
+        const chips = el('div', 'home-hero__chips');
+        chips.append(el('span', 'chip chip--deep', label));
+        chips.append(el('span', 'chip ' + (CATEGORY_CHIP[p.category] || ''), CATEGORY[p.category] || '괴담'));
+        if (p.effectsCount) chips.append(el('span', 'chip chip--amber', '연출 ' + p.effectsCount + '개'));
+        if (p.warnings.includes('faint')) chips.append(el('span', 'chip chip--outline-amber', '심약자 주의'));
+        const h = el('h1', 'home-hero__title');
+        const a = el('a', '', p.title);
+        a.href = 'post.html?id=' + p.id;
+        h.append(a);
+        const actions = el('div', 'home-hero__actions');
+        const read = el('a', 'btn btn--primary btn--lg', '지금 읽기');
+        read.href = 'post.html?id=' + p.id;
+        actions.append(read, el('span', 'shudder-btn', '소름 ' + p.likes.toLocaleString('ko-KR')),
+          el('span', 'stat', '댓글 ' + p.comments.toLocaleString('ko-KR')), el('span', 'stat', '조회 ' + p.views.toLocaleString('ko-KR')));
+        hero.append(chips, h, el('p', 'home-hero__excerpt', p.excerpt), el('p', 'muted', p.author + ' · ' + timeAgo(p.createdAt)), actions);
+      })();
+    }
+
+    // 사이드바·푸터의 실제 숫자 (주간 스토리텔러, 시간대별 소름, 오늘 눌린 소름)
+    api('GET', '/api/stats/home').then((st) => {
+      const today = $('#home-today');
+      if (today) today.textContent = st.todayShudders.toLocaleString('ko-KR');
+
+      const tellers = $('#home-tellers');
+      if (tellers) {
+        tellers.textContent = '';
+        if (!st.storytellers.length) tellers.append(el('li', 'muted', '이번 주에는 아직 소름을 받은 작가가 없어요.'));
+        st.storytellers.forEach((t, i) => {
+          const li = el('li', 'teller-row');
+          li.append(el('span', 'rank-num rank-num--lg ' + (i === 0 ? 'rank-num--gold' : 'rank-num--silver'), String(i + 1)));
+          const body = el('div', 'rank-row__body');
+          body.append(el('p', 'rank-row__title', t.nickname), el('p', 'rank-row__sub', '소름 받은 글 ' + t.posts + '편'));
+          li.append(body, el('span', 'rank-row__score', t.likes.toLocaleString('ko-KR') + ' 소름'));
+          tellers.append(li);
+        });
+      }
+
+      const hourly = $('#home-hourly');
+      if (hourly) {
+        hourly.textContent = '';
+        const max = Math.max(...st.hourly);
+        if (!max) { hourly.append(el('p', 'muted', '아직 데이터가 쌓이는 중이에요.')); return; }
+        const peak = st.hourly.indexOf(max);
+        $('#home-peak').textContent = 'PEAK ' + String(peak).padStart(2, '0') + ':00';
+        const NS = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', '0 0 240 90');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', '시간대별 소름 수, 가장 많은 시간은 ' + peak + '시');
+        st.hourly.forEach((n, h) => {
+          const bh = Math.max(2, Math.round((n / max) * 70));
+          const r = document.createElementNS(NS, 'rect');
+          r.setAttribute('x', String(h * 10 + 1));
+          r.setAttribute('y', String(76 - bh));
+          r.setAttribute('width', '8');
+          r.setAttribute('height', String(bh));
+          r.setAttribute('rx', '2');
+          r.setAttribute('fill', h === peak ? '#ff2a4b' : 'rgba(255,42,75,0.35)');
+          const title = document.createElementNS(NS, 'title');
+          title.textContent = h + '시: 소름 ' + n;
+          r.append(title);
+          svg.append(r);
+        });
+        [0, 6, 12, 18].forEach((h) => {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', String(h * 10 + 1));
+          t.setAttribute('y', '88');
+          t.setAttribute('font-size', '8');
+          t.setAttribute('fill', '#94a3b8');
+          t.textContent = String(h).padStart(2, '0') + '시';
+          svg.append(t);
+        });
+        hourly.append(svg);
+      }
+    }).catch(() => { /* 숫자를 못 불러와도 나머지 화면은 그대로 */ });
+
     // 사이드바: 진짜 무서운 영화 TOP 5 (영화 순위 API)
     const topBox = $('#home-top-movies');
     if (topBox) {
@@ -216,6 +314,18 @@
 
           // 본문은 서버에서 허용한 태그만 남긴 HTML이라 그대로 넣음
           article.innerHTML = post.content;
+
+          // 칠흑 모드 글: 검은 바탕에 제목·글·사진만. 독자는 버튼으로 끌 수 있음
+          if (post.display === 'void') {
+            document.body.classList.add('void-reading');
+            const vt = $('#void-toggle');
+            vt.hidden = false;
+            vt.addEventListener('click', () => {
+              const on = document.body.classList.toggle('void-reading');
+              vt.setAttribute('aria-pressed', String(on));
+              vt.textContent = on ? '칠흑 모드 켜짐' : '칠흑 모드 꺼짐';
+            });
+          }
 
           // 흐리게 가린 증거 사진: "사진 보기"를 눌러야 선명해짐
           $$('figure.evidence-photo[data-blur]', article).forEach((fig) => {
@@ -329,7 +439,11 @@
     const refresh = () => document.dispatchEvent(new CustomEvent('editor:refresh'));
 
     const syncSource = () => { sourceRow.hidden = categoryInput.value !== 'intl'; };
+
+    // 명예의 전당 기준 점수 (실제 설정값)
+    api('GET', '/api/stats/home').then((st) => { const t = $('#best-threshold'); if (t) t.textContent = st.bestThreshold; }).catch(() => {});
     categoryGroup.addEventListener('toggle-change', () => { syncSource(); saveDraftSoon(); });
+    $('[data-input="display"]').addEventListener('toggle-change', () => saveDraftSoon());
 
     const setCategory = (cat) => {
       $$('.toggle', categoryGroup).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === cat)));
@@ -346,6 +460,7 @@
       title: title.value.trim(),
       content: editor.innerHTML,
       source_url: sourceUrl.value.trim(),
+      display: form.querySelector('input[name="display"]').value,
       warnings: $$('.check[data-warning][aria-checked="true"]').map((b) => b.dataset.warning),
       tags: window.HorrorEditor ? HorrorEditor.getTags() : []
     });
@@ -355,6 +470,9 @@
       editor.innerHTML = p.content || '<p><br></p>';
       sourceUrl.value = p.source_url || p.sourceUrl || '';
       setCategory(p.category || 'real');
+      const disp = p.display === 'void' ? 'void' : 'normal';
+      $$('[data-input="display"] .toggle').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.value === disp)));
+      form.querySelector('input[name="display"]').value = disp;
       setWarnings(p.warnings || []);
       setTags(p.tags || []);
       refresh();
