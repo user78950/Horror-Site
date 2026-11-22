@@ -89,6 +89,7 @@
       <span class="filter-bar__label">정렬:</span>
       <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false" data-sort="hot">소름 많은순</button>
       <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="true" data-sort="new">최신순</button>
+      <button type="button" class="toggle toggle--flat toggle--quiet mono" aria-pressed="false" data-sort="comments">댓글순</button>
       <span class="chip chip--amber">심야핫토픽</span>
     </div>
   </div>
@@ -271,14 +272,10 @@
       <section class="panel">
         <div class="panel__head">
           <h2 class="panel__title">진짜 무서운 영화 TOP 5</h2>
-          <span class="panel__meta">매니아 검증</span>
+          <span class="panel__meta">매니아 무서움 점수</span>
         </div>
-        <ol class="rank-list">
-          <li class="rank-row rank-row--top"><span class="rank-num rank-num--gold">1</span><div class="rank-row__body"><p class="rank-row__title">유전 (Hereditary, 2018)</p><p class="rank-row__sub">“불쾌감과 공포의 완벽한 결합”</p></div><span class="rank-row__score">9.4</span></li>
-          <li class="rank-row"><span class="rank-num rank-num--silver">2</span><div class="rank-row__body"><p class="rank-row__title">랑종 (The Medium, 2021)</p><p class="rank-row__sub">페이크 다큐 끝판왕 소름</p></div><span class="rank-row__score">9.1</span></li>
-          <li class="rank-row"><span class="rank-num rank-num--silver">3</span><div class="rank-row__body"><p class="rank-row__title">주 (Incantation, 2022)</p><p class="rank-row__sub">관객에게 전이되는 저주 주문</p></div><span class="rank-row__score">8.9</span></li>
-          <li class="rank-row"><span class="rank-num">4</span><div class="rank-row__body"><p class="rank-row__title">컨저링 (The Conjuring, 2013)</p><p class="rank-row__sub">점프스케어의 압도적 긴장</p></div><span class="rank-row__score">8.8</span></li>
-          <li class="rank-row"><span class="rank-num">5</span><div class="rank-row__body"><p class="rank-row__title">곡성 (The Wailing, 2016)</p><p class="rank-row__sub">한국 오컬트 스릴러의 정점</p></div><span class="rank-row__score">8.7</span></li>
+        <ol class="rank-list" id="home-top-movies">
+          <li class="muted" style="font-size: 13px">불러오는 중…</li>
         </ol>
         <a href="movies.html" class="btn btn--ghost btn--sm">내 인생 공포영화 투표하기</a>
       </section>

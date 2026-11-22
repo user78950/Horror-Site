@@ -89,6 +89,7 @@
       text.append(h, el('p', 'post-card__excerpt', p.excerpt));
       const foot = el('div', 'post-card__foot');
       foot.append(el('span', 'shudder-btn', '소름 ' + p.likes.toLocaleString('ko-KR')));
+      foot.append(el('span', 'stat', '댓글 ' + p.comments.toLocaleString('ko-KR')));
       if (p.tags.length) foot.append(el('span', 'muted', p.tags.join(' ')));
       foot.append(el('span', 'stat', '조회 ' + p.views.toLocaleString('ko-KR')));
       art.append(meta, text, foot);
@@ -116,7 +117,7 @@
       const q = new URLSearchParams();
       if (view.category !== 'all') q.set('category', view.category);
       if (view.best) q.set('best', '1');
-      else if (view.sort === 'hot') q.set('sort', 'hot');
+      else if (view.sort !== 'new') q.set('sort', view.sort);
       api('GET', '/api/posts' + (q.toString() ? '?' + q : ''))
         .then(({ posts }) => {
           list.textContent = '';
@@ -141,6 +142,25 @@
     $$('[data-sort]').forEach((btn) => btn.addEventListener('click', () => { setSort(btn.dataset.sort); load(); }));
     applyTab(params.get('tab') || 'all');
     load();
+
+    // 사이드바: 진짜 무서운 영화 TOP 5 (영화 순위 API)
+    const topBox = $('#home-top-movies');
+    if (topBox) {
+      api('GET', '/api/movies?limit=5').then(({ movies }) => {
+        topBox.textContent = '';
+        const rated = movies.filter((m) => m.votes);
+        if (!rated.length) { topBox.append(el('li', 'muted', '아직 점수가 매겨진 영화가 없어요.')); return; }
+        rated.forEach((m, i) => {
+          const li = el('li', 'rank-row' + (i === 0 ? ' rank-row--top' : ''));
+          li.append(el('span', 'rank-num' + (i === 0 ? ' rank-num--gold' : i < 3 ? ' rank-num--silver' : ''), String(i + 1)));
+          const body = el('div', 'rank-row__body');
+          body.append(el('p', 'rank-row__title', m.title + (m.year ? ` (${m.year})` : '')));
+          body.append(el('p', 'rank-row__sub', m.votes.toLocaleString('ko-KR') + '명 평가'));
+          li.append(body, el('span', 'rank-row__score', m.average.toFixed(1)));
+          topBox.append(li);
+        });
+      }).catch(() => { topBox.textContent = ''; topBox.append(el('li', 'muted', '영화 순위를 불러오지 못했어요.')); });
+    }
   }
 
   /* =========================================================

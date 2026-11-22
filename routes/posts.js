@@ -46,6 +46,7 @@ function toPost(row, full, user) {
     dislikes: row.dislike_count || 0,
     score: (row.like_count || 0) - (row.dislike_count || 0),
     isBest: !!row.is_best,
+    comments: row.comment_count || 0,
     views: row.views,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -116,7 +117,9 @@ router.get('/', (req, res) => {
     ? 'p.best_at DESC, p.id DESC'                                          // 최근에 베스트가 된 순
     : req.query.sort === 'hot'
       ? '(p.like_count - p.dislike_count) DESC, p.like_count DESC, p.created_at DESC'   // 소름 많은순
-      : 'p.created_at DESC, p.id DESC';                                    // 최신순
+      : req.query.sort === 'comments'
+        ? 'p.comment_count DESC, p.created_at DESC'                        // 댓글순
+        : 'p.created_at DESC, p.id DESC';                                  // 최신순
   const rows = db.prepare(`${SELECT_POST} ${where} ORDER BY ${order} LIMIT ? OFFSET ?`)
     .all(...args, PAGE_SIZE, (page - 1) * PAGE_SIZE);
   const total = db.prepare(`SELECT COUNT(*) AS n FROM posts p ${where}`).get(...args).n;
@@ -178,6 +181,7 @@ router.delete('/:id', requireAuth, (req, res) => {
   const id = validId(req, res); if (id === null) return;
   if (!findEditable(req, res, id)) return;
   db.prepare('DELETE FROM reactions WHERE post_id = ?').run(id);
+  db.prepare('DELETE FROM comments WHERE post_id = ?').run(id);
   const result = db.prepare('DELETE FROM posts WHERE id = ?').run(id);
   if (result.changes === 0) return res.status(404).json({ error: '이미 삭제된 글이에요.' });
   res.json({ ok: true });

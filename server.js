@@ -30,6 +30,14 @@ app.get('/api/health', (req, res) => {
 // 회원가입·로그인 (routes/auth.js)
 app.use('/api/auth', require('./routes/auth'));
 
+// 댓글 (routes/comments.js)
+const { postComments, comments } = require('./routes/comments');
+app.use('/api/posts/:postId/comments', postComments);
+app.use('/api/comments', comments);
+
+// 공포영화 순위·무서움 점수 (routes/movies.js)
+app.use('/api/movies', require('./routes/movies'));
+
 // 괴담 글 쓰기·보기·수정·삭제 (routes/posts.js)
 app.use('/api/posts', require('./routes/posts'));
 

@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env server.js",
-    "dev": "node --watch --env-file-if-exists=.env server.js"
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "seed:movies": "node --env-file-if-exists=.env scripts/seed-movies.js"
   },
   "dependencies": {
     "express": "^4.21.2",

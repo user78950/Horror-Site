@@ -989,3 +989,30 @@ body.void-page { background: #000; }
 .reaction__note { min-height: 1.2em; font-size: 13px; color: var(--amber-text); }
 .reaction__note:empty { min-height: 0; }
 .best-chip { background: var(--amber); color: var(--bg-abyss); }
+
+/* 댓글 (post.html) */
+.comment__text { white-space: pre-wrap; word-break: break-word; }
+.comment__actions { margin-left: auto; display: flex; gap: 2px; }
+.comment__actions .btn { min-height: 32px; padding: 0 8px; }
+.comment__spoiler { position: relative; }
+.comment__spoiler.is-hidden .comment__text { filter: blur(6px); user-select: none; }
+.comment__spoiler-btn { position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+.comment__spoiler:not(.is-hidden) .comment__spoiler-btn { display: none; }
+.comment__edit { display: flex; flex-direction: column; gap: 8px; }
+.comment__edit textarea { width: 100%; padding: 10px 12px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--bg-input); font-size: 14px; resize: vertical; }
+.comment__edit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 13px; color: var(--text-soft); }
+.comment-gate { padding: 14px 16px; border-radius: var(--r-md); background: var(--bg-raised); font-size: 14px; color: var(--text-soft); }
+.comment-gate a { color: var(--blood-text); }
+.comments-empty { padding: 18px 0; color: var(--text-muted); font-size: 14px; }
+
+/* 공포영화 순위 (movies.html) */
+.rating { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rating__label { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-right: 2px; }
+.rating__btn { min-width: 40px; min-height: 40px; padding: 0 8px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--bg-raised); color: var(--text-soft); font-family: var(--font-mono); font-weight: 600; }
+.rating__btn:hover { border-color: var(--blood); color: #fff; }
+.rating__btn[aria-pressed="true"] { border-color: var(--blood); background: var(--blood); color: var(--bg-abyss); }
+.rating__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.rating__hint { font-size: 12px; color: var(--text-muted); }
+.mv-admin-actions { display: flex; gap: 4px; margin-left: auto; }
+.mv-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.mv-empty-score { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }

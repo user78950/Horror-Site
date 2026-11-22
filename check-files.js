@@ -10,11 +10,11 @@ const REQUIRED = [
   'data/.gitignore',
   'db/database.js',
   'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js',
-  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js',
+  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'scripts/seed-movies.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
   'public/story.html', 'public/story-glasses.html', 'public/movies.html', 'public/guidelines.html',
   'public/css/style.css',
-  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js',
+  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js',
   'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg', 'public/images/hero-elevator.jpg',
   'public/images/post-doll.jpg', 'public/images/post-letter.jpg', 'public/images/post-phone.jpg', 'public/images/post-talisman.jpg',
   'public/sounds/sounds.json', 'public/sounds/sample-bell.wav',
@@ -35,7 +35,11 @@ const CONTENT_CHECKS = [
   ['public/write.html', 'js/effects.js', '글쓰기 화면이 연출 엔진을 불러와야 해요'],
   ['public/js/app.js', 'tool-line', 'app.js 가 최신 툴바 코드여야 해요'],
   ['routes/posts.js', "router.post('/:id/reaction'", '소름·덤덤 API 가 있어야 해요'],
-  ['public/post.html', 'react-like', '글 보기 화면에 소름 버튼이 있어야 해요']
+  ['public/post.html', 'react-like', '글 보기 화면에 소름 버튼이 있어야 해요'],
+  ['public/post.html', 'cm-form', '글 보기 화면에 댓글 영역이 있어야 해요'],
+  ['server.js', "app.use('/api/comments'", '댓글 API 가 연결되어 있어야 해요'],
+  ['server.js', "app.use('/api/movies'", '영화 API 가 연결되어 있어야 해요'],
+  ['public/movies.html', 'js/movies.js', '영화 페이지가 새 버전이어야 해요']
 ];
 
 const root = process.cwd();

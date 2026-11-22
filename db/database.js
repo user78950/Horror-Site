@@ -86,6 +86,50 @@ if (!postCols.includes('is_best')) db.exec('ALTER TABLE posts ADD COLUMN is_best
 if (!postCols.includes('best_at')) db.exec('ALTER TABLE posts ADD COLUMN best_at TEXT');
 db.exec('CREATE INDEX IF NOT EXISTS idx_posts_best ON posts (is_best, best_at)');
 
+// 댓글
+db.exec(`
+  CREATE TABLE IF NOT EXISTS comments (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id     INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    content     TEXT    NOT NULL,                 -- 글자 그대로 저장 (화면에는 글자로만 표시해서 HTML이 실행되지 않음)
+    anonymous   INTEGER NOT NULL DEFAULT 0,       -- 1이면 "익명의 심야 독자"로 표시
+    spoiler     INTEGER NOT NULL DEFAULT 0,       -- 1이면 눌러야 보이게 가림
+    created_at  TEXT    NOT NULL,
+    updated_at  TEXT    NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_comments_post ON comments (post_id, created_at);
+`);
+if (!db.prepare('PRAGMA table_info(posts)').all().some((c) => c.name === 'comment_count')) {
+  db.exec('ALTER TABLE posts ADD COLUMN comment_count INTEGER NOT NULL DEFAULT 0');
+}
+
+// 공포영화 (관리자가 등록) + 회원의 무서움 점수 (1~5, 한 사람이 영화마다 하나)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS movies (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    title           TEXT    NOT NULL,              -- 한국어 제목
+    original_title  TEXT    NOT NULL DEFAULT '',   -- 원제
+    year            INTEGER,
+    country         TEXT    NOT NULL DEFAULT '',
+    tags            TEXT    NOT NULL DEFAULT '[]', -- JSON 배열: ["occult", "folk"]
+    description     TEXT    NOT NULL DEFAULT '',
+    warning         TEXT    NOT NULL DEFAULT '',   -- 예: 충격적 장면 주의
+    rating_count    INTEGER NOT NULL DEFAULT 0,
+    rating_sum      INTEGER NOT NULL DEFAULT 0,
+    created_at      TEXT    NOT NULL,
+    updated_at      TEXT    NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS movie_ratings (
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    movie_id    INTEGER NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
+    score       INTEGER NOT NULL CHECK (score BETWEEN 1 AND 5),
+    created_at  TEXT    NOT NULL,
+    PRIMARY KEY (user_id, movie_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_movie_ratings_movie ON movie_ratings (movie_id);
+`);
+
 // 만료된 로그인 정리
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString());
 
