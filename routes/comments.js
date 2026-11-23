@@ -19,6 +19,10 @@ const MAX_LENGTH = 1000;
 
 // 짧은 시간에 댓글을 너무 많이 쓰면 잠시 막음 (도배 방지): 1분에 10개
 const recent = new Map();
+setInterval(() => {   // 1분 지난 기록 정리
+  const now = Date.now();
+  [...recent.keys()].forEach((k) => { if (!(recent.get(k) || []).some((t) => now - t < 60 * 1000)) recent.delete(k); });
+}, 5 * 60 * 1000).unref();
 function tooFast(userId) {
   const now = Date.now();
   const list = (recent.get(userId) || []).filter((t) => now - t < 60 * 1000);

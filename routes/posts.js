@@ -15,6 +15,7 @@ const express = require('express');
 const db = require('../db/database');
 const { cleanContent, plainText, extractEffects } = require('../lib/sanitize');
 const { requireAuth, requireVerified } = require('../lib/auth');
+const cleanup = require('../lib/cleanup');
 
 const router = express.Router();
 
@@ -159,7 +160,7 @@ router.post('/', requireVerified, (req, res) => {
 // 수정
 // 수정·삭제 전에: 글이 있는지, 지금 사람이 고칠 수 있는지 확인
 function findEditable(req, res, id) {
-  const row = db.prepare('SELECT id, user_id FROM posts WHERE id = ?').get(id);
+  const row = db.prepare('SELECT id, user_id, content FROM posts WHERE id = ?').get(id);
   if (!row) { res.status(404).json({ error: '글을 찾을 수 없어요. 삭제되었을 수 있어요.' }); return null; }
   if (!canEdit(row, req.user)) { res.status(403).json({ error: '내가 쓴 글만 수정·삭제할 수 있어요.' }); return null; }
   return row;
@@ -167,7 +168,7 @@ function findEditable(req, res, id) {
 
 router.put('/:id', requireAuth, (req, res) => {
   const id = validId(req, res); if (id === null) return;
-  if (!findEditable(req, res, id)) return;
+  const before = findEditable(req, res, id); if (!before) return;
   const { error, value: v } = validate(req.body || {});
   if (error) return res.status(400).json({ error });
   const result = db.prepare(
@@ -176,17 +177,21 @@ router.put('/:id', requireAuth, (req, res) => {
       WHERE id = ?`
   ).run(v.category, v.title, v.content, v.excerpt, v.sourceUrl || null, v.warnings, v.tags, v.effects, v.display, new Date().toISOString(), id);
   if (result.changes === 0) return res.status(404).json({ error: '글을 찾을 수 없어요. 삭제되었을 수 있어요.' });
+  // 수정하면서 본문에서 뺀 사진 파일은 지움
+  const kept = new Set(cleanup.imagesIn(v.content));
+  cleanup.removeImagesIfUnused(cleanup.imagesIn(before.content).filter((n) => !kept.has(n)));
   res.json({ id });
 });
 
 // 삭제
 router.delete('/:id', requireAuth, (req, res) => {
   const id = validId(req, res); if (id === null) return;
-  if (!findEditable(req, res, id)) return;
+  const before = findEditable(req, res, id); if (!before) return;
   db.prepare('DELETE FROM reactions WHERE post_id = ?').run(id);
   db.prepare('DELETE FROM comments WHERE post_id = ?').run(id);
   const result = db.prepare('DELETE FROM posts WHERE id = ?').run(id);
   if (result.changes === 0) return res.status(404).json({ error: '이미 삭제된 글이에요.' });
+  cleanup.removeImagesIfUnused(cleanup.imagesIn(before.content));   // 글에 쓰인 사진 파일도 지움
   res.json({ ok: true });
 });
 

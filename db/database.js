@@ -66,6 +66,10 @@ if (!userColumns.includes('firebase_uid')) db.exec('ALTER TABLE users ADD COLUMN
 if (!userColumns.includes('email_verified')) db.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0');
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_firebase ON users (firebase_uid)');
 
+// Firebase로 바꾸기 전에 만든 계정의 비밀번호 해시는 더 이상 쓰지 않으므로 지움
+// (처리방침: 사이트는 비밀번호를 보관하지 않음)
+db.prepare("UPDATE users SET password_hash = '!firebase' WHERE password_hash NOT LIKE '!%'").run();
+
 // 소름·덤덤 반응: 한 사람이 한 글에 하나만 (UNIQUE)
 db.exec(`
   CREATE TABLE IF NOT EXISTS reactions (

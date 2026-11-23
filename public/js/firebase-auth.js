@@ -222,10 +222,58 @@ async function initVerifyBanner() {
   banner.dataset.ready = '1';
 }
 
+/* ---------- 내 계정: 회원 탈퇴 ---------- */
+async function initAccount(me) {
+  const form = $('#delete-form');
+  const user = fb.auth.currentUser;
+  const isGoogle = !!user && user.providerData.some((p) => p.providerId === 'google.com');
+  if (user && !isGoogle) $('#delete-password-row').hidden = false;
+  if (isGoogle) $('#delete-google-note').hidden = false;
+  if (!user) say('보안을 위해 로그아웃한 뒤 다시 로그인하면 탈퇴할 수 있어요.');
+  else setBusy(false);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    say('');
+    if ($('#delete-confirm').value.trim() !== me.nickname) { say('닉네임이 일치하지 않아요.'); return; }
+    if (!confirm('정말 탈퇴할까요? 쓴 글과 댓글을 포함한 모든 정보가 바로 지워지고 되돌릴 수 없어요.')) return;
+    setBusy(true);
+    try {
+      // 1) 본인 확인을 위해 다시 로그인
+      if (isGoogle) {
+        await fb.api.reauthenticateWithPopup(user, new fb.api.GoogleAuthProvider());
+      } else {
+        const pw = $('#delete-password').value;
+        if (!pw) { say('비밀번호를 입력해 주세요.'); setBusy(false); return; }
+        await fb.api.reauthenticateWithCredential(user, fb.api.EmailAuthProvider.credential(user.email, pw));
+      }
+      // 2) 사이트의 모든 정보 지우기 (방금 받은 증명서로)
+      const idToken = await user.getIdToken(true);
+      const res = await fetch('/api/auth/me', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || '탈퇴하지 못했어요.');
+      // 3) Firebase 로그인 계정 지우기
+      let firebaseOk = true;
+      try { await fb.api.deleteUser(user); } catch (err) { firebaseOk = false; }
+      try { localStorage.removeItem('horror-draft-new'); } catch (err) { /* 무시 */ }
+      $('#delete-account').hidden = true;
+      $('#delete-done').hidden = false;
+      if (!firebaseOk) {
+        $('#delete-done-text').textContent = '사이트의 모든 정보는 지웠지만 로그인 계정 정리에 실패했어요. 개인정보 처리방침의 보호책임자 이메일로 알려 주시면 바로 지울게요.';
+        await fb.api.signOut(fb.auth).catch(() => {});
+      }
+    } catch (err) {
+      say(friendly(err));
+      setBusy(false);
+    }
+  });
+}
+
 /* ---------- 시작 ---------- */
 (async () => {
   const isLogin = !!$('#login-form');
   const isSignup = !!$('#signup-form');
+  const isAccount = !!$('#delete-form');
   const hasBanner = !!$('#verify-banner');
   try {
     await start();
@@ -234,6 +282,7 @@ async function initVerifyBanner() {
     setBusy(true);
     const note = $('#verify-note');
     if (note) note.textContent = err.message;
+    if (isAccount) say(err.message);
     return;
   }
 
@@ -251,4 +300,8 @@ async function initVerifyBanner() {
     setBusy(false);
   }
   if (hasBanner) initVerifyBanner();
+  if ($('#delete-form')) {
+    const me = window.HorrorAuth ? await HorrorAuth.ready : null;
+    if (me) initAccount(me);
+  }
 })();

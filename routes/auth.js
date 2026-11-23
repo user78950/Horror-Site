@@ -4,6 +4,7 @@
 //   POST /api/auth/firebase   { idToken, nickname? }  Firebase가 확인한 사람을 우리 사이트에 로그인
 //   POST /api/auth/logout     로그아웃
 //   GET  /api/auth/me         지금 로그인한 사람 (없으면 null)
+//   DELETE /api/auth/me       회원 탈퇴 { idToken } — 방금(5분 안에) 다시 로그인해서 받은 증명서가 필요
 //
 // 비밀번호 확인, 구글 로그인, 비밀번호 찾기 메일, 이메일 인증 메일은 Firebase가 처리합니다.
 
@@ -11,6 +12,7 @@ const express = require('express');
 const db = require('../db/database');
 const auth = require('../lib/auth');
 const firebase = require('../lib/firebase');
+const cleanup = require('../lib/cleanup');
 
 const router = express.Router();
 
@@ -84,6 +86,61 @@ router.post('/firebase', async (req, res) => {
   auth.endSession(req, res);
   auth.startSession(res, row.id);
   res.json({ user: auth.toPublicUser({ ...row, email, email_verified: verified ? 1 : 0 }) });
+});
+
+// 회원 탈퇴: 회원 정보와 쓴 글·댓글·반응·영화 점수·신고 기록을 모두 지움
+// (Firebase 쪽 계정은 브라우저가 이어서 지움. firebase-auth.js 참고)
+router.delete('/me', auth.requireAuth, async (req, res) => {
+  const idToken = String((req.body && req.body.idToken) || '');
+  let decoded;
+  try {
+    decoded = await firebase.verifyIdToken(idToken);
+  } catch (err) {
+    return res.status(401).json({ error: '본인 확인에 실패했어요. 다시 로그인한 뒤 시도해 주세요.' });
+  }
+  const me = db.prepare('SELECT id, firebase_uid FROM users WHERE id = ?').get(req.user.id);
+  if (!me || me.firebase_uid !== decoded.uid) return res.status(403).json({ error: '지금 로그인한 계정과 확인한 계정이 달라요.' });
+  // 방금 다시 로그인했는지 (켜 둔 컴퓨터에서 남이 누르는 것을 막기 위해)
+  if (!decoded.auth_time || Date.now() / 1000 - decoded.auth_time > 5 * 60) {
+    return res.status(401).json({ error: '보안을 위해 다시 로그인한 직후에만 탈퇴할 수 있어요.', code: 'recent-login' });
+  }
+
+  const uid = me.id;
+  const myPosts = db.prepare('SELECT id, content FROM posts WHERE user_id = ?').all(uid);
+  const images = myPosts.flatMap((p) => cleanup.imagesIn(p.content));
+  const postIds = myPosts.map((p) => p.id);
+  // 내 반응·댓글이 있던 다른 사람 글, 내 점수가 있던 영화 (지운 뒤 숫자를 다시 세려고)
+  const touchedPosts = new Set([
+    ...db.prepare('SELECT DISTINCT post_id AS id FROM reactions WHERE user_id = ?').all(uid).map((r) => r.id),
+    ...db.prepare('SELECT DISTINCT post_id AS id FROM comments WHERE user_id = ?').all(uid).map((r) => r.id)
+  ]);
+  const touchedMovies = db.prepare('SELECT movie_id AS id FROM movie_ratings WHERE user_id = ?').all(uid).map((r) => r.id);
+
+  db.exec('BEGIN');
+  try {
+    postIds.forEach((pid) => {
+      db.prepare('DELETE FROM reactions WHERE post_id = ?').run(pid);
+      db.prepare('DELETE FROM comments WHERE post_id = ?').run(pid);
+      db.prepare('DELETE FROM posts WHERE id = ?').run(pid);
+      touchedPosts.delete(pid);
+    });
+    db.prepare('DELETE FROM reactions WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM comments WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM movie_ratings WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM reports WHERE reporter_id = ?').run(uid);
+    db.prepare('UPDATE reports SET handled_by = NULL WHERE handled_by = ?').run(uid);
+    db.prepare('DELETE FROM sessions WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM users WHERE id = ?').run(uid);
+    touchedPosts.forEach((pid) => cleanup.recountPost(pid));
+    touchedMovies.forEach((mid) => cleanup.recountMovie(mid));
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    return res.status(500).json({ error: '탈퇴 처리 중 문제가 생겼어요. 잠시 후 다시 시도하거나 운영자에게 알려 주세요.' });
+  }
+  cleanup.removeImagesIfUnused(images);
+  auth.endSession(req, res);
+  res.json({ ok: true, deletedPosts: postIds.length });
 });
 
 router.post('/logout', (req, res) => {

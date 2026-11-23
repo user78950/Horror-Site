@@ -9,10 +9,10 @@ const REQUIRED = [
   '.env.example', 'README.md', 'package.json', 'package-lock.json', 'server.js',
   'data/.gitignore',
   'db/database.js',
-  'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js',
+  'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js', 'lib/cleanup.js',
   'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
-  'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html',
+  'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html', 'public/account.html',
   'public/css/style.css',
   'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js', 'public/js/report.js', 'public/js/admin.js',
   'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg',
@@ -49,7 +49,9 @@ const CONTENT_CHECKS = [
   ['public/index.html', 'home-hero', '홈 화면이 실제 데이터 버전이어야 해요'],
   ['server.js', "app.use('/api/stats'", '홈 숫자 API 가 연결되어 있어야 해요'],
   ['server.js', "app.use('/api/reports'", '신고 API 가 연결되어 있어야 해요'],
-  ['public/post.html', 'post-report', '글 보기 화면에 신고 버튼이 있어야 해요']
+  ['public/post.html', 'post-report', '글 보기 화면에 신고 버튼이 있어야 해요'],
+  ['routes/auth.js', "router.delete('/me'", '회원 탈퇴 API 가 있어야 해요'],
+  ['server.js', 'startScheduledCleanup', '주기 정리가 켜져 있어야 해요']
 ];
 
 const root = process.cwd();

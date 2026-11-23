@@ -56,7 +56,10 @@
         avatar.className = 'avatar';
         avatar.setAttribute('aria-hidden', 'true');
         avatar.textContent = user.nickname.charAt(0);
-        const name = document.createElement('span');
+        const name = document.createElement('a');
+        name.href = 'account.html';
+        name.className = 'user__name';
+        name.title = '내 계정';
         name.textContent = user.nickname;
         slot.append(avatar, name);
         if (user.isAdmin) {
@@ -86,6 +89,17 @@
       }
     });
   });
+
+  /* ---------- 내 계정 화면 ---------- */
+  if ($('#account-view')) {
+    ready.then((user) => {
+      if (!user) { location.replace(loginUrl()); return; }
+      $('#account-state').hidden = true;
+      $('#account-view').hidden = false;
+      $('#account-nickname').textContent = user.nickname;
+      $('#account-verified').textContent = user.emailVerified ? '완료' : '아직 안 했어요 (글쓰기 화면에서 인증 메일을 다시 받을 수 있어요)';
+    });
+  }
 
   // 로그인·회원가입 화면의 폼은 firebase-auth.js 가 처리합니다
 })();

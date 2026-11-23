@@ -126,12 +126,17 @@ function createLimiter({ max, windowMs, message }) {
     hits.set(key, list);
     return list;
   };
-  return {
-    blocked: (key) => recent(key).length >= max,
+  const limiter = {
+    blocked: (key) => { const n = recent(key).length; if (!n) hits.delete(key); return n >= max; },
     hit: (key) => { recent(key).push(Date.now()); },
     reset: (key) => { hits.delete(key); },
+    // 기간이 지난 기록은 키(IP 등)까지 통째로 지움 → 처리방침의 "잠시 사용 후 사라짐"
+    sweep: () => { [...hits.keys()].forEach((k) => { if (!recent(k).length) hits.delete(k); }); },
     message
   };
+  const timer = setInterval(limiter.sweep, 5 * 60 * 1000);
+  timer.unref();
+  return limiter;
 }
 
 // 비밀번호를 틀린 횟수 제한은 Firebase가 맡고, 우리 서버는 로그인 연결 요청 횟수만 제한

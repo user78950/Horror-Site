@@ -84,6 +84,9 @@ app.get('/api/sounds', (req, res) => {
 // app.get('/api/movies', ...)             영화 순위
 // app.post('/api/movies/:id/ratings', ...)  무서움 점수 투표
 
+// 주기 정리 시작 (만료된 로그인, 1년 지난 신고 기록, 쓰이지 않는 사진)
+require('./lib/cleanup').startScheduledCleanup();
+
 app.listen(PORT, () => {
   console.log(`심야 archive 서버 실행 중: http://localhost:${PORT}`);
 });
