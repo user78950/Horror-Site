@@ -35,6 +35,9 @@ const { postComments, comments } = require('./routes/comments');
 app.use('/api/posts/:postId/comments', postComments);
 app.use('/api/comments', comments);
 
+// 신고 (routes/reports.js)
+app.use('/api/reports', require('./routes/reports'));
+
 // 홈 화면 숫자 (routes/stats.js)
 app.use('/api/stats', require('./routes/stats'));
 

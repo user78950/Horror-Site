@@ -60,9 +60,11 @@
         name.textContent = user.nickname;
         slot.append(avatar, name);
         if (user.isAdmin) {
-          const chip = document.createElement('span');
+          const chip = document.createElement('a');
           chip.className = 'chip chip--amber';
-          chip.textContent = '관리자';
+          chip.href = 'admin.html';
+          chip.textContent = '관리자 · 신고 관리';
+          chip.style.textDecoration = 'none';
           slot.append(chip);
         }
         const out = document.createElement('button');

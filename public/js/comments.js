@@ -66,6 +66,16 @@
     if (c.anonymous && c.isMine) head.append(el('span', 'chip', '내 익명 댓글'));
     head.append(el('span', 'muted', timeAgo(c.createdAt) + (c.edited ? ' · 수정됨' : '')));
 
+    if (!c.isMine) {
+      const actions = el('span', 'comment__actions');
+      if (!c.canEdit) {
+        const rep = el('button', 'btn btn--text btn--sm', '신고');
+        rep.type = 'button';
+        rep.addEventListener('click', () => window.HorrorReport && HorrorReport.open('comment', c.id, c.author + '님의 댓글을 신고해요.'));
+        actions.append(rep);
+        head.append(actions);
+      }
+    }
     if (c.canEdit) {
       const actions = el('span', 'comment__actions');
       const edit = el('button', 'btn btn--text btn--sm', '수정');

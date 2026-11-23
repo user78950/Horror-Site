@@ -136,6 +136,24 @@ if (!db.prepare('PRAGMA table_info(posts)').all().some((c) => c.name === 'displa
 }
 db.exec('CREATE INDEX IF NOT EXISTS idx_reactions_created ON reactions (created_at)');
 
+// 신고: 한 사람이 같은 글·댓글을 한 번만 신고
+db.exec(`
+  CREATE TABLE IF NOT EXISTS reports (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    target_type  TEXT    NOT NULL CHECK (target_type IN ('post', 'comment')),
+    target_id    INTEGER NOT NULL,
+    reporter_id  INTEGER NOT NULL REFERENCES users(id),
+    reason       TEXT    NOT NULL,     -- gore, defamation, privacy, copyright, spam, other
+    detail       TEXT    NOT NULL DEFAULT '',
+    status       TEXT    NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'resolved', 'dismissed')),
+    created_at   TEXT    NOT NULL,
+    handled_at   TEXT,
+    handled_by   INTEGER REFERENCES users(id),
+    UNIQUE (target_type, target_id, reporter_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_reports_status ON reports (status, created_at);
+`);
+
 // 만료된 로그인 정리
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString());
 

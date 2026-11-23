@@ -95,6 +95,19 @@ npm start
 - **포스터:** 저작권 때문에 실제 포스터 대신 제목만 적힌 빈 자리를 씁니다. 소개 문구는 직접 쓴 짧은 문장으로 넣어 주세요.
 - **API:** `GET /api/movies?tag=occult&limit=5`, `POST /api/movies/:id/rating` `{ "score": 1~5 | null }`, 관리자 전용 `POST·PUT·DELETE /api/movies`
 
+## 신고 · 개인정보 처리방침
+
+| 화면 | 하는 일 |
+| --- | --- |
+| `post.html` | 글의 "신고" 버튼, 댓글 옆 "신고" → 이유를 골라 보내기 (내 글·댓글에는 안 보임) |
+| `admin.html` | 관리자 전용 신고 관리. 같은 대상의 신고를 묶어 보여 주고 "삭제하고 처리", "삭제 없이 처리 완료", "문제 없음"으로 처리. 헤더의 "관리자 · 신고 관리"로 들어감 |
+| `privacy.html` | 개인정보 처리방침. 모든 페이지 아래쪽과 가입 화면에 링크 |
+
+- **신고:** 이메일 인증을 마친 회원만 할 수 있고, 같은 대상은 한 번만 신고할 수 있습니다. 신고한 사람은 공개되지 않습니다.
+- **처리방침 빈칸:** `privacy.html`의 노란 빈칸(시행일, 운영자, 책임자 이메일, 호스팅 업체와 서버 지역 등)을 출시 전에 꼭 채우세요. `node check-files.js`가 남은 빈칸을 알려 줍니다.
+- **가입 동의:** 가입 화면 체크 항목에 "만 14세 이상, 가이드라인, 개인정보 처리방침 확인"이 포함됩니다.
+- **API:** `POST /api/reports`, 관리자 전용 `GET /api/reports?status=open`, `POST /api/reports/handle`
+
 ## 회원가입 · 로그인 (Firebase)
 
 로그인 자체는 **Firebase Authentication**이 맡고, 우리 서버는 Firebase가 확인해 준 사람에게 로그인 쿠키(세션)를 발급합니다. 글쓰기 권한, 내 글만 수정·삭제, 관리자 등은 우리 서버가 그대로 관리합니다.
@@ -150,6 +163,7 @@ horror-site/
 ├── routes/comments.js 댓글 API
 ├── routes/movies.js   공포영화 순위·무서움 점수 API
 ├── routes/stats.js    홈 화면 숫자 API
+├── routes/reports.js  신고 API
 ├── scripts/seed-movies.js 시작용 영화 목록 넣기 (npm run seed:movies)
 ├── scripts/seed-posts.js  시드 괴담 넣기 (npm run seed:posts)
 ├── routes/uploads.js 증거 사진 올리기 API
@@ -167,6 +181,8 @@ horror-site/
     ├── js/posts.js    글 목록·보기·쓰기·수정·삭제 화면 동작
     ├── js/comments.js 댓글 화면 동작
     ├── js/movies.js   공포영화 순위 화면 동작
+    ├── js/report.js   신고하기 창
+    ├── js/admin.js    신고 관리 화면 (관리자)
     ├── post.html      저장된 글 보기
     └── images/        화면에 쓰인 사진
 ```

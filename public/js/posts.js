@@ -311,6 +311,10 @@
           $('#post-edit').href = 'write.html?id=' + post.id;
           $('#post-edit').hidden = !post.canEdit;
           $('#post-delete').hidden = !post.canEdit;
+          // 신고: 내 글이 아닐 때만
+          const reportBtn = $('#post-report');
+          reportBtn.hidden = post.isMine;
+          reportBtn.addEventListener('click', () => window.HorrorReport && HorrorReport.open('post', post.id, '「' + post.title + '」 글을 신고해요.'));
 
           // 본문은 서버에서 허용한 태그만 남긴 HTML이라 그대로 넣음
           article.innerHTML = post.content;

@@ -10,11 +10,11 @@ const REQUIRED = [
   'data/.gitignore',
   'db/database.js',
   'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js',
-  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
+  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
-  'public/movies.html', 'public/guidelines.html',
+  'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html',
   'public/css/style.css',
-  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js',
+  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js', 'public/js/report.js', 'public/js/admin.js',
   'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg',
   'public/sounds/sounds.json', 'public/sounds/sample-bell.wav',
   'public/uploads/.gitignore'
@@ -47,7 +47,9 @@ const CONTENT_CHECKS = [
   ['server.js', "app.use('/api/movies'", '영화 API 가 연결되어 있어야 해요'],
   ['public/movies.html', 'js/movies.js', '영화 페이지가 새 버전이어야 해요'],
   ['public/index.html', 'home-hero', '홈 화면이 실제 데이터 버전이어야 해요'],
-  ['server.js', "app.use('/api/stats'", '홈 숫자 API 가 연결되어 있어야 해요']
+  ['server.js', "app.use('/api/stats'", '홈 숫자 API 가 연결되어 있어야 해요'],
+  ['server.js', "app.use('/api/reports'", '신고 API 가 연결되어 있어야 해요'],
+  ['public/post.html', 'post-report', '글 보기 화면에 신고 버튼이 있어야 해요']
 ];
 
 const root = process.cwd();
@@ -97,6 +99,16 @@ if (!fs.existsSync(env)) {
 const gi = path.join(root, '.gitignore');
 if (!fs.existsSync(gi) || !/^\.env\s*$/m.test(fs.readFileSync(gi, 'utf8'))) {
   console.log('! 맨 위 .gitignore 에 .env 줄이 없어요. 추가해 주세요.');
+}
+// 출시 전에 채울 빈칸
+const privacy = path.join(root, 'public', 'privacy.html');
+if (fs.existsSync(privacy)) {
+  const blanks = (fs.readFileSync(privacy, 'utf8').match(/class="fill-me"/g) || []).length;
+  if (blanks) console.log('! 개인정보 처리방침(public/privacy.html)에 채우지 않은 빈칸이 ' + blanks + '개 있어요. 출시 전에 채워 주세요.');
+}
+const guide = path.join(root, 'public', 'guidelines.html');
+if (fs.existsSync(guide) && fs.readFileSync(guide, 'utf8').includes('[신고용 이메일 주소]')) {
+  console.log('! 가이드라인(public/guidelines.html)의 [신고용 이메일 주소]를 실제 주소로 바꿔 주세요.');
 }
 if (!fs.existsSync(path.join(root, 'node_modules', 'firebase-admin'))) {
   console.log('! 라이브러리가 설치되지 않았어요. npm install 을 실행해 주세요.');

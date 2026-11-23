@@ -174,7 +174,7 @@ async function initSignup() {
     if (!/^[0-9A-Za-z가-힣_]{2,12}$/.test(nickname)) { say('닉네임은 2~12자의 한글, 영문, 숫자, 밑줄(_)로 정해 주세요.'); return; }
     if (pw.value.length < 8) { say('비밀번호는 8자 이상으로 정해 주세요.'); pw.focus(); return; }
     if (pw.value !== $('#signup-password2').value) { say('비밀번호 확인이 일치하지 않아요.'); return; }
-    if (!$('#signup-agree').checked) { say('커뮤니티 가이드라인에 동의해 주세요.'); return; }
+    if (!$('#signup-agree').checked) { say('만 14세 이상인지, 가이드라인과 개인정보 처리방침을 확인했는지 체크해 주세요.'); return; }
     setBusy(true);
     try {
       // 닉네임이 겹쳐서 다시 누른 경우: 이미 만든 Firebase 계정을 그대로 씀

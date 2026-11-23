@@ -1060,3 +1060,23 @@ body.void-reading .fx-unit:hover .fx-replay, body.void-reading .fx-replay:focus-
 /* 사이트 이름 '심야 archive': 영어 부분은 고정폭 소문자로 */
 .logo__name { white-space: nowrap; }
 .logo__en { font-family: var(--font-mono); font-weight: 600; font-size: 0.82em; letter-spacing: 0.04em; text-transform: lowercase; opacity: 0.9; }
+
+/* 신고하기 창 */
+.report-dialog { width: min(460px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: var(--bg-card); color: var(--text); }
+.report-dialog::backdrop { background: rgba(0, 0, 0, 0.7); }
+.report-form { display: flex; flex-direction: column; gap: 14px; padding: 24px; }
+.report-reasons { display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--text-soft); }
+.report-reasons legend { margin-bottom: 6px; }
+.report-reasons label { display: flex; align-items: center; gap: 8px; min-height: 32px; }
+.report-form .field-label textarea { margin-top: 6px; font-family: var(--font-body); letter-spacing: 0; }
+.report-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* 개인정보 처리방침 */
+.fill-me { padding: 0 4px; border-radius: 3px; background: rgba(255, 153, 0, 0.18); color: var(--amber-text); font-weight: 600; }
+.table-wrap { overflow-x: auto; }
+.info-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 13px; }
+.info-table th, .info-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.info-table th { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.info-table td { color: var(--text-soft); }
+
+.site-footer__row .site-footer__links { align-items: center; }
