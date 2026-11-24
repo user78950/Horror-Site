@@ -108,6 +108,32 @@ npm start
 - **가입 동의:** 가입 화면 체크 항목에 "만 14세 이상, 가이드라인, 개인정보 처리방침 확인"이 포함됩니다.
 - **API:** `POST /api/reports`, 관리자 전용 `GET /api/reports?status=open`, `POST /api/reports/handle`
 
+## 프로필
+
+- `profile.html`: 헤더의 내 닉네임을 누르면 **내 프로필**이 열립니다. 가입일, 쓴 괴담 수, 받은 소름, 명예의 전당 편수와 내가 쓴 글 목록(최신순·소름 많은순, 글마다 "수정")이 보입니다. "계정 설정"에서 회원 탈퇴를 할 수 있습니다.
+- 글 목록, 글 보기, 홈 배너의 **작성자 이름을 누르면** 그 사람의 프로필로 갑니다. 다른 사람의 프로필에는 이메일이 보이지 않고 수정 버튼도 없습니다.
+- **API:** `GET /api/users/:id`, `GET /api/posts?author=:id`
+
+## 배포 (Render)
+
+`render.yaml`에 서버 설정이 들어 있습니다. 서버(유료 starter 요금제) 한 대와 1GB 영구 디스크(`/var/data`)를 싱가포르 지역에 만들고, DB와 올린 사진을 그 디스크에 저장합니다.
+
+1. Render에 깃허브 계정으로 가입합니다.
+2. 대시보드 → **New → Blueprint** → 이 저장소를 고릅니다.
+3. 입력 칸이 나오면 `ADMIN_EMAILS`, `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID`를 `.env`와 같은 값으로 넣습니다.
+4. 배포가 끝나면 `https://simya-archive.onrender.com`(또는 Render가 알려 주는 주소)이 생깁니다.
+5. **Firebase 콘솔 → Authentication → 설정 → 승인된 도메인**에 그 주소(예: `simya-archive.onrender.com`)를 추가합니다.
+6. 사이트에서 운영자 이메일로 가입합니다. 그다음 Render의 서비스 → **Shell**에서 시작용 데이터를 넣습니다.
+   ```
+   npm run seed:movies
+   npm run seed:posts
+   ```
+7. Render에서 **Manual Deploy → Restart**로 서버를 다시 켠 뒤에도 글·회원·사진이 남아 있는지 확인합니다.
+
+- 이후에는 깃허브에 `push`하면 자동으로 새 버전이 배포됩니다. 디스크가 붙은 서버는 배포할 때 몇 초 동안 멈추니, 사람이 적은 시간에 push하세요.
+- **백업:** 관리자 화면(`admin.html`)의 "DB 백업 내려받기"로 DB를 내려받을 수 있습니다. 올린 사진은 Render 디스크 스냅숏(매일 자동)으로 보관됩니다.
+- **처리방침:** 호스팅 업체 `Render Services, Inc.`와 서버 지역 `싱가포르`를 `privacy.html` 빈칸에 채우세요.
+
 ## 회원 탈퇴 · 개인정보 정리 (처리방침을 코드로 지키기)
 
 | 처리방침의 약속 | 코드 |
@@ -174,6 +200,10 @@ horror-site/
 ├── lib/auth.js        세션, 요청 제한, 출처 확인, 이메일 인증 검사
 ├── lib/firebase.js    Firebase 증명서 확인
 ├── lib/cleanup.js     사진 정리, 숫자 다시 세기, 주기 정리 (처리방침 보관 기간 지키기)
+├── lib/paths.js       DB·사진 저장 위치 (배포에서는 영구 디스크)
+├── routes/users.js    프로필 API
+├── routes/admin.js    관리자 도구 (DB 백업)
+├── render.yaml        Render 배포 설정
 ├── routes/posts.js    괴담 글 API (목록·보기·쓰기·수정·삭제, 소름·덤덤)
 ├── routes/comments.js 댓글 API
 ├── routes/movies.js   공포영화 순위·무서움 점수 API
@@ -198,6 +228,7 @@ horror-site/
     ├── js/movies.js   공포영화 순위 화면 동작
     ├── js/report.js   신고하기 창
     ├── js/admin.js    신고 관리 화면 (관리자)
+    ├── js/profile.js  프로필 화면
     ├── post.html      저장된 글 보기
     └── images/        화면에 쓰인 사진
 ```

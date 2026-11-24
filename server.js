@@ -19,6 +19,8 @@ app.use('/api', auth.sameOriginOnly);
 app.use('/api/uploads', require('./routes/uploads'));
 
 app.use(express.json({ limit: '1mb' }));
+// 올린 사진: UPLOAD_DIR 에서 /uploads/... 주소로 제공 (배포에서는 영구 디스크)
+app.use('/uploads', express.static(require('./lib/paths').UPLOAD_DIR, { maxAge: '7d', immutable: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- API (다음 단계) ----------
@@ -34,6 +36,12 @@ app.use('/api/auth', require('./routes/auth'));
 const { postComments, comments } = require('./routes/comments');
 app.use('/api/posts/:postId/comments', postComments);
 app.use('/api/comments', comments);
+
+// 관리자 도구: DB 백업 (routes/admin.js)
+app.use('/api/admin', require('./routes/admin'));
+
+// 프로필 (routes/users.js)
+app.use('/api/users', require('./routes/users'));
 
 // 신고 (routes/reports.js)
 app.use('/api/reports', require('./routes/reports'));

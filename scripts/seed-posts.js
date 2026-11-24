@@ -26,8 +26,7 @@ if (!admin.email_verified) {
 }
 
 // 사진을 올린 사진처럼 uploads 폴더에 복사
-const uploads = path.join(__dirname, '..', 'public', 'uploads');
-fs.mkdirSync(uploads, { recursive: true });
+const uploads = require('../lib/paths').UPLOAD_DIR;
 function copyImage(file) {
   const name = crypto.randomUUID() + '.jpg';
   fs.copyFileSync(path.join(__dirname, '..', 'public', 'images', file), path.join(uploads, name));

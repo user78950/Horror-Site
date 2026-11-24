@@ -40,6 +40,7 @@ function toPost(row, full, user) {
     title: row.title,
     excerpt: row.excerpt,
     author: row.author_name || row.author,
+    authorId: row.user_id || null,
     warnings: parse(row.warnings, []),
     tags: parse(row.tags, []),
     effectsCount: parse(row.effects, []).length,
@@ -116,6 +117,7 @@ router.get('/', (req, res) => {
   const args = [];
   if (category) { conditions.push('p.category = ?'); args.push(category); }
   if (req.query.best === '1') conditions.push('p.is_best = 1');           // 명예의 전당
+  if (/^\d+$/.test(String(req.query.author || ''))) { conditions.push('p.user_id = ?'); args.push(Number(req.query.author)); }   // 프로필
   const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
   const order = req.query.best === '1'
     ? 'p.best_at DESC, p.id DESC'                                          // 최근에 베스트가 된 순

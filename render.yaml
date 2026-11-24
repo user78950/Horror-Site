@@ -1,0 +1,41 @@
+# Render 배포 설정 (Blueprint)
+# Render 대시보드 → New → Blueprint 에서 이 저장소를 고르면 아래대로 서버와 영구 디스크가 만들어집니다.
+# sync: false 인 값은 만들 때 Render 화면에서 직접 입력합니다 (깃허브에 올리지 않는 값).
+
+services:
+  - type: web
+    name: simya-archive
+    runtime: node
+    plan: starter                 # 영구 디스크는 유료 요금제에서만 붙일 수 있음
+    region: singapore             # 한국과 가장 가까운 지역. 만든 뒤에는 바꿀 수 없음
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true              # 깃허브에 push 하면 자동으로 새 버전 배포
+    disk:
+      name: simya-data
+      mountPath: /var/data        # 글·회원 DB와 올린 사진이 여기 저장되어 배포·재시작 후에도 남음
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production         # 로그인 쿠키를 https 에서만 주고받음
+      - key: DB_PATH
+        value: /var/data/horror.db
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: BEST_THRESHOLD
+        value: "3"
+      - key: SESSION_DAYS
+        value: "14"
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: FIREBASE_API_KEY
+        sync: false
+      - key: FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_APP_ID
+        sync: false

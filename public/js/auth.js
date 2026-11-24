@@ -57,9 +57,9 @@
         avatar.setAttribute('aria-hidden', 'true');
         avatar.textContent = user.nickname.charAt(0);
         const name = document.createElement('a');
-        name.href = 'account.html';
+        name.href = 'profile.html';
         name.className = 'user__name';
-        name.title = '내 계정';
+        name.title = '내 프로필';
         name.textContent = user.nickname;
         slot.append(avatar, name);
         if (user.isAdmin) {

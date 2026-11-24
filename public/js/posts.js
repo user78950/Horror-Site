@@ -51,6 +51,16 @@
     return new Date(iso).toLocaleDateString('ko-KR');
   }
 
+  // 작성자 이름 → 프로필 링크 (회원이 아닌 예전 글은 글자만)
+  function authorNode(name, id) {
+    if (!id) return document.createTextNode(name);
+    const a = document.createElement('a');
+    a.className = 'author-link';
+    a.href = 'profile.html?id=' + id;
+    a.textContent = name;
+    return a;
+  }
+
   // 사용자 글은 항상 textContent로 넣어 HTML 주입을 막음
   function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -80,7 +90,9 @@
       meta.append(el('span', 'chip ' + (CATEGORY_CHIP[p.category] || ''), '[' + (CATEGORY[p.category] || '괴담') + ']'));
       if (p.effectsCount) meta.append(el('span', 'chip chip--amber', '연출 ' + p.effectsCount + '개'));
       if (p.warnings.includes('faint')) meta.append(el('span', 'chip', '심약자 주의'));
-      meta.append(el('span', '', p.author + ' · ' + timeAgo(p.createdAt)));
+      const by = el('span', '');
+      by.append(authorNode(p.author, p.authorId), ' · ' + timeAgo(p.createdAt));
+      meta.append(by);
       const text = el('div', 'post-card__text');
       const h = el('h2', 'post-card__title');
       const a = el('a', '', p.title);
@@ -178,7 +190,9 @@
         read.href = 'post.html?id=' + p.id;
         actions.append(read, el('span', 'shudder-btn', '소름 ' + p.likes.toLocaleString('ko-KR')),
           el('span', 'stat', '댓글 ' + p.comments.toLocaleString('ko-KR')), el('span', 'stat', '조회 ' + p.views.toLocaleString('ko-KR')));
-        hero.append(chips, h, el('p', 'home-hero__excerpt', p.excerpt), el('p', 'muted', p.author + ' · ' + timeAgo(p.createdAt)), actions);
+        const by = el('p', 'muted');
+        by.append(authorNode(p.author, p.authorId), ' · ' + timeAgo(p.createdAt));
+        hero.append(chips, h, el('p', 'home-hero__excerpt', p.excerpt), by, actions);
       })();
     }
 
@@ -292,7 +306,9 @@
           post.tags.forEach((t) => chips.append(el('span', 'chip', t)));
 
           const meta = $('#post-meta');
-          meta.append(el('span', '', '작성 ' + post.author));
+          const by = el('span', '', '작성 ');
+          by.append(authorNode(post.author, post.authorId));
+          meta.append(by);
           meta.append(el('span', '', timeAgo(post.createdAt)));
           if (post.updatedAt !== post.createdAt) meta.append(el('span', '', '수정됨 ' + timeAgo(post.updatedAt)));
           meta.append(el('span', '', '조회 ' + post.views.toLocaleString('ko-KR')));

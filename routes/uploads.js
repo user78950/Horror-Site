@@ -4,8 +4,7 @@
 // 브라우저(app.js)가 사진을 가로 1600px JPG로 다시 그려서 보내므로 보통 1MB 안쪽입니다.
 // 그래도 서버에서 한 번 더 검사하고, 사진 속 숨은 정보(촬영 위치 등)를 지운 뒤 저장합니다.
 //
-// ⚠ 저장 위치 public/uploads 는 서버 디스크입니다. 배포할 때는 파일이 유지되는 디스크나
-//   별도 이미지 저장소가 필요합니다. 이메일 인증을 마친 회원만 올릴 수 있습니다.
+// 저장 위치는 UPLOAD_DIR (기본 public/uploads, 배포에서는 영구 디스크). 이메일 인증을 마친 회원만 올릴 수 있습니다.
 
 const express = require('express');
 const fs = require('fs');
@@ -15,8 +14,7 @@ const crypto = require('crypto');
 const { requireVerified } = require('../lib/auth');
 
 const router = express.Router();
-const DIR = path.join(__dirname, '..', 'public', 'uploads');
-fs.mkdirSync(DIR, { recursive: true });
+const DIR = require('../lib/paths').UPLOAD_DIR;   // 배포에서는 영구 디스크 안
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);

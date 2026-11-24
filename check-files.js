@@ -9,12 +9,12 @@ const REQUIRED = [
   '.env.example', 'README.md', 'package.json', 'package-lock.json', 'server.js',
   'data/.gitignore',
   'db/database.js',
-  'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js', 'lib/cleanup.js',
-  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
+  'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js', 'lib/cleanup.js', 'lib/paths.js', 'render.yaml',
+  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'routes/users.js', 'routes/admin.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
-  'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html', 'public/account.html',
+  'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html', 'public/account.html', 'public/profile.html',
   'public/css/style.css',
-  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js', 'public/js/report.js', 'public/js/admin.js',
+  'public/js/app.js', 'public/js/auth.js', 'public/js/effects.js', 'public/js/firebase-auth.js', 'public/js/posts.js', 'public/js/comments.js', 'public/js/movies.js', 'public/js/report.js', 'public/js/admin.js', 'public/js/profile.js',
   'public/images/evidence-fingers.jpg', 'public/images/evidence-hall.jpg',
   'public/sounds/sounds.json', 'public/sounds/sample-bell.wav',
   'public/uploads/.gitignore'
@@ -51,7 +51,10 @@ const CONTENT_CHECKS = [
   ['server.js', "app.use('/api/reports'", '신고 API 가 연결되어 있어야 해요'],
   ['public/post.html', 'post-report', '글 보기 화면에 신고 버튼이 있어야 해요'],
   ['routes/auth.js', "router.delete('/me'", '회원 탈퇴 API 가 있어야 해요'],
-  ['server.js', 'startScheduledCleanup', '주기 정리가 켜져 있어야 해요']
+  ['server.js', 'startScheduledCleanup', '주기 정리가 켜져 있어야 해요'],
+  ['server.js', "app.use('/api/users'", '프로필 API 가 연결되어 있어야 해요'],
+  ['server.js', "app.use('/uploads'", '사진을 저장 위치(UPLOAD_DIR)에서 제공해야 해요'],
+  ['routes/uploads.js', 'UPLOAD_DIR', '사진 올리기가 저장 위치 설정을 따라야 해요']
 ];
 
 const root = process.cwd();
