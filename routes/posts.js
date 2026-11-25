@@ -63,6 +63,14 @@ function toPost(row, full, user) {
   return post;
 }
 
+// 주의 문구·태그 정리 (임시 저장 routes/drafts.js 에서도 같이 씀)
+const cleanWarnings = (list) => (Array.isArray(list) ? list : []).filter((w) => WARNINGS.includes(w));
+const cleanTags = (list) => (Array.isArray(list) ? list : [])
+  .map((t) => String(t).trim().replace(/\s+/g, ''))
+  .filter(Boolean)
+  .map((t) => (t.startsWith('#') ? t : '#' + t).slice(0, 20))
+  .slice(0, 5);
+
 // 들어온 값 검사 → 문제가 있으면 { error } 를, 없으면 저장할 값을 돌려줌
 function validate(body) {
   const category = String(body.category || '');
@@ -84,12 +92,8 @@ function validate(body) {
     sourceUrl = '';
   }
 
-  const warnings = (Array.isArray(body.warnings) ? body.warnings : []).filter((w) => WARNINGS.includes(w));
-  const tags = (Array.isArray(body.tags) ? body.tags : [])
-    .map((t) => String(t).trim().replace(/\s+/g, ''))
-    .filter(Boolean)
-    .map((t) => (t.startsWith('#') ? t : '#' + t).slice(0, 20))
-    .slice(0, 5);
+  const warnings = cleanWarnings(body.warnings);
+  const tags = cleanTags(body.tags);
 
   const display = body.display === 'void' ? 'void' : 'normal';
 
@@ -156,6 +160,11 @@ router.post('/', requireVerified, (req, res) => {
     `INSERT INTO posts (category, title, content, excerpt, author, user_id, source_url, warnings, tags, effects, display, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(v.category, v.title, v.content, v.excerpt, req.user.nickname, req.user.id, v.sourceUrl || null, v.warnings, v.tags, v.effects, v.display, now, now);
+  // 임시 저장 글을 발행한 경우 그 임시 글은 지움 (본인 것만)
+  const draftId = Number(req.body && req.body.draft_id);
+  if (Number.isInteger(draftId) && draftId > 0) {
+    db.prepare('DELETE FROM drafts WHERE id = ? AND user_id = ?').run(draftId, req.user.id);
+  }
   res.status(201).json({ id: Number(result.lastInsertRowid) });
 });
 
@@ -241,3 +250,6 @@ router.post('/:id/reaction', requireVerified, (req, res) => {
 
 module.exports = router;
 module.exports.validate = validate;
+module.exports.CATEGORIES = CATEGORIES;
+module.exports.cleanWarnings = cleanWarnings;
+module.exports.cleanTags = cleanTags;

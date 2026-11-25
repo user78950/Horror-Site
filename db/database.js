@@ -158,6 +158,26 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_reports_status ON reports (status, created_at);
 `);
 
+// 임시 저장 글: 발행 전 글을 본인만 보도록 posts 와 따로 보관 (공개 목록에 절대 섞이지 않게)
+// 마지막 수정 후 90일이 지나면 lib/cleanup.js 의 주기 정리가 지움
+db.exec(`
+  CREATE TABLE IF NOT EXISTS drafts (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    category    TEXT    NOT NULL DEFAULT 'real',
+    title       TEXT    NOT NULL DEFAULT '',
+    content     TEXT    NOT NULL DEFAULT '',      -- 정리(sanitize)된 본문 HTML
+    excerpt     TEXT    NOT NULL DEFAULT '',
+    source_url  TEXT    NOT NULL DEFAULT '',
+    display     TEXT    NOT NULL DEFAULT 'normal',
+    warnings    TEXT    NOT NULL DEFAULT '[]',
+    tags        TEXT    NOT NULL DEFAULT '[]',
+    created_at  TEXT    NOT NULL,
+    updated_at  TEXT    NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_drafts_user ON drafts (user_id, updated_at);
+`);
+
 // 만료된 로그인 정리
 db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(new Date().toISOString());
 

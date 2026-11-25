@@ -1,7 +1,8 @@
 /* =========================================================
    심야 archive — 프로필 (profile.js)
    profile.html?id=회원번호  → 그 회원의 프로필과 쓴 글
-   profile.html              → 내 프로필 (로그인 필요)
+   profile.html              → 내 프로필 (로그인 필요) + "임시 저장" 탭
+   profile.html#drafts       → 내 프로필의 임시 저장 탭을 바로 열기
    ========================================================= */
 
 (function () {
@@ -28,8 +29,13 @@
     if (sec < 86400 * 7) return Math.floor(sec / 86400) + '일 전';
     return new Date(iso).toLocaleDateString('ko-KR');
   }
-  async function api(url) {
-    const res = await fetch(url);
+  async function api(url, method) {
+    let res;
+    try {
+      res = await fetch(url, { method: method || 'GET' });
+    } catch (e) {
+      throw new Error('서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.');
+    }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '불러오지 못했어요.');
     return data;
@@ -88,6 +94,72 @@
     }
   }
 
+  /* ---------- 임시 저장 탭 (내 프로필에서만) ---------- */
+  function draftCard(d) {
+    const art = el('article', 'post-card');
+    const meta = el('div', 'post-card__meta');
+    meta.append(el('span', 'chip chip--outline-amber', '임시 저장'));
+    meta.append(el('span', 'chip', CATEGORY[d.category] || '괴담'));
+    meta.append(el('span', '', '마지막 저장 ' + timeAgo(d.updatedAt)));
+    const text = el('div', 'post-card__text');
+    const h = el('h3', 'post-card__title');
+    const a = el('a', '', d.title || '제목 없는 글');
+    a.href = 'write.html?draft=' + d.id;
+    h.append(a);
+    text.append(h, el('p', 'post-card__excerpt', d.excerpt || '아직 본문이 없어요.'));
+    const foot = el('div', 'post-card__foot');
+    const resume = el('a', 'btn btn--primary btn--sm', '이어 쓰기');
+    resume.href = 'write.html?draft=' + d.id;
+    const del = el('button', 'btn btn--ghost btn--sm', '삭제');
+    del.type = 'button';
+    del.addEventListener('click', async () => {
+      if (!confirm('이 임시 글을 지울까요? 지우면 되돌릴 수 없어요.')) return;
+      del.disabled = true;
+      try {
+        await api('/api/drafts/' + d.id, 'DELETE');
+        loadDrafts();
+      } catch (err) {
+        del.disabled = false;
+        alert(err.message);
+      }
+    });
+    foot.append(resume, del);
+    art.append(meta, text, foot);
+    return art;
+  }
+
+  async function loadDrafts() {
+    const list = $('#profile-drafts');
+    try {
+      const data = await api('/api/drafts');
+      list.textContent = '';
+      $('#tab-drafts').textContent = '임시 저장 (' + data.drafts.length + ')';
+      $('#profile-drafts-meta').textContent = data.drafts.length + ' / ' + data.max + '개';
+      if (!data.drafts.length) {
+        const box = el('div', 'panel');
+        box.append(el('p', 'panel__title', '임시 저장한 글이 없어요.'));
+        box.append(el('p', 'muted', '글쓰기 화면에서 "임시 저장"을 누르면 여기에 모여요.'));
+        const go = el('a', 'btn btn--primary', '새 괴담 쓰기');
+        go.href = 'write.html';
+        go.style.alignSelf = 'flex-start';
+        box.append(go);
+        list.append(box);
+      }
+      data.drafts.forEach((d) => list.append(draftCard(d)));
+    } catch (err) {
+      list.textContent = '';
+      list.append(el('p', 'muted', err.message));
+    }
+  }
+
+  // 탭 전환 (버튼 켜고 끄기는 app.js 가 하고, 여기서는 보여 줄 영역만 바꿈)
+  $('#profile-tabs').addEventListener('toggle-change', (e) => {
+    const drafts = e.detail.dataset.ptab === 'drafts';
+    $('#profile-drafts-section').hidden = !drafts;
+    $('#profile-posts-section').hidden = drafts;
+    if (drafts) loadDrafts();
+  });
+
   $('#profile-more').addEventListener('click', () => { page += 1; loadPosts(false); });
   $$('[data-psort]').forEach((b) => b.addEventListener('click', () => { sort = b.dataset.psort; loadPosts(true); }));
 
@@ -112,6 +184,11 @@
       state.hidden = true;
       view.hidden = false;
       loadPosts(true);
+      if (isMe) {
+        $('#profile-tabs').hidden = false;
+        loadDrafts();   // 탭에 개수 표시
+        if (location.hash === '#drafts') $('#tab-drafts').click();
+      }
     } catch (err) {
       state.textContent = err.message;
     }

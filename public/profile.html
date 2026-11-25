@@ -48,7 +48,22 @@
       </div>
     </section>
 
-    <section style="display: flex; flex-direction: column; gap: 14px" aria-labelledby="profile-posts-title">
+    <!-- 내 프로필에서만 보이는 탭: 쓴 괴담 / 임시 저장 -->
+    <div class="filter-bar__group" role="tablist" aria-label="내 글 보기" data-toggle-group="selected" id="profile-tabs" hidden>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="true" aria-controls="profile-posts-section" data-ptab="posts">쓴 괴담</button>
+      <button type="button" class="toggle toggle--flat toggle--solid" role="tab" aria-selected="false" aria-controls="profile-drafts-section" data-ptab="drafts" id="tab-drafts">임시 저장</button>
+    </div>
+
+    <section id="profile-drafts-section" role="tabpanel" hidden style="display: flex; flex-direction: column; gap: 14px" aria-labelledby="profile-drafts-title">
+      <div class="panel__head">
+        <h2 class="panel__title" id="profile-drafts-title">임시 저장한 글</h2>
+        <span class="panel__meta mono" id="profile-drafts-meta"></span>
+      </div>
+      <p class="muted" style="font-size: 13px">나만 볼 수 있어요. 90일 동안 고치지 않은 임시 글은 자동으로 지워져요.</p>
+      <div id="profile-drafts" style="display: flex; flex-direction: column; gap: 14px" aria-live="polite"></div>
+    </section>
+
+    <section id="profile-posts-section" role="tabpanel" style="display: flex; flex-direction: column; gap: 14px" aria-labelledby="profile-posts-title">
       <div class="panel__head">
         <h2 class="panel__title" id="profile-posts-title">쓴 괴담</h2>
         <div class="filter-bar__group" data-toggle-group="pressed">

@@ -3,7 +3,7 @@
    서버의 /api/posts 와 주고받습니다.
      - index.html : "새로 올라온 괴담" 목록
      - post.html  : 글 보기 + 수정·삭제 버튼
-     - write.html : 새 글 쓰기 / ?id=번호 로 열면 수정
+     - write.html : 새 글 쓰기 / ?id=번호 로 열면 수정 / ?draft=번호 로 열면 임시 저장 글 이어 쓰기
    ========================================================= */
 
 (function () {
@@ -514,14 +514,51 @@
       });
     }
 
-    /* ---- 임시 저장 (새 글만): 쓰는 도중 브라우저를 닫아도 남아 있게 ---- */
+    /* ---- 임시 저장 ----
+       1) 서버 임시 글이 없는 새 글: 지금처럼 이 브라우저(localStorage)에만 자동 저장
+       2) "임시 저장" 버튼을 누르면 서버에 임시 글이 생기고 주소가 write.html?draft=번호 로 바뀜
+          → 그 뒤로는 쓰는 동안 3초마다 서버에 자동 저장 (프로필 "임시 저장" 탭에서 이어 쓰기) */
+    const draftSave = $('#draft-save');
+    const BLANK = { category: 'real', warnings: ['faint'], tags: [], title: '', content: '<p><br></p>' };
+    const clock = () => new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    let draftId = !id && /^\d+$/.test(params.get('draft') || '') ? Number(params.get('draft')) : null;
     let draftTimer = null;
+    let serverTimer = null;
+    let dirty = false;        // 서버에 아직 안 보낸 고친 내용이 있는지
+    let saving = null;        // 지금 보내는 중인 저장 요청 (겹치지 않게 하나씩)
+    let creating = false;     // "임시 저장" 버튼으로 새로 만드는 중
+    let loading = !!draftId;  // 서버 임시 글을 불러오는 중에는 저장하지 않음
+    let leaving = false;      // 발행 후 페이지를 떠나는 중
+
+    function saveServerSoon() {
+      clearTimeout(serverTimer);
+      serverTimer = setTimeout(flushServer, 3000);
+    }
+
+    function flushServer() {
+      clearTimeout(serverTimer);
+      if (!draftId || !dirty) return Promise.resolve();
+      if (saving) return saving.then(flushServer);
+      dirty = false;
+      say('저장하는 중…');
+      saving = api('PUT', '/api/drafts/' + draftId, collect())
+        .then(() => say('서버에 임시 저장됨 (' + clock() + ')'))
+        .catch((err) => { dirty = true; say('임시 저장 실패: ' + err.message); })
+        .finally(() => { saving = null; });
+      return saving;
+    }
+
     function saveDraftSoon() {
-      if (id) return;
+      if (id || loading) return;
+      if (draftId || creating) {
+        dirty = true;
+        if (draftId) saveServerSoon();
+        return;
+      }
       clearTimeout(draftTimer);
       draftTimer = setTimeout(() => {
         store.set(DRAFT_KEY, JSON.stringify(collect()));
-        say('임시 저장됨 (' + new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ')');
+        say('이 브라우저에 임시 저장됨 (' + clock() + ')');
         draftClear.hidden = false;
       }, 800);
     }
@@ -530,13 +567,65 @@
     form.addEventListener('click', (e) => { if (e.target.closest('.check, .tag button')) saveDraftSoon(); });
     $('#tag-input').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') saveDraftSoon(); });
 
+    const showServerDraft = () => {
+      draftClear.textContent = '임시 글 삭제';
+      draftClear.hidden = false;
+    };
+
+    // "임시 저장" 버튼: 처음이면 서버에 새로 만들고, 이미 있으면 바로 저장
+    draftSave.addEventListener('click', () => {
+      if (draftId) { dirty = true; flushServer(); return; }
+      if (creating) return;
+      creating = true;
+      dirty = false;
+      draftSave.disabled = true;
+      clearTimeout(draftTimer);
+      say('임시 저장하는 중…');
+      api('POST', '/api/drafts', collect())
+        .then((res) => {
+          draftId = res.id;
+          history.replaceState(null, '', 'write.html?draft=' + draftId);
+          store.del(DRAFT_KEY);
+          showServerDraft();
+          say('서버에 임시 저장됨 (' + clock() + ') · 이제 쓰는 동안 자동으로 저장돼요');
+          if (dirty) saveServerSoon();   // 저장하는 사이에 더 쓴 내용
+        })
+        .catch((err) => say(err.message))
+        .finally(() => { creating = false; draftSave.disabled = false; });
+    });
+
+    // 다른 탭으로 가거나 창을 내리면 바로 한 번 저장
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushServer(); });
+    // 서버에 아직 못 보낸 내용이 있으면 나가기 전에 한 번 물어봄
+    window.addEventListener('beforeunload', (e) => {
+      if (!leaving && draftId && (dirty || saving)) { flushServer(); e.preventDefault(); e.returnValue = ''; }
+    });
+
     draftClear.addEventListener('click', () => {
+      if (draftId) {
+        if (!confirm('이 임시 글을 지울까요? 지우면 되돌릴 수 없어요.')) return;
+        clearTimeout(serverTimer);
+        dirty = false;
+        api('DELETE', '/api/drafts/' + draftId)
+          .then(() => {
+            draftId = null;
+            history.replaceState(null, '', 'write.html');
+            fill(BLANK);
+            draftClear.textContent = '임시 글 지우기';
+            draftClear.hidden = true;
+            say('임시 글을 지웠어요');
+          })
+          .catch((err) => say(err.message));
+        return;
+      }
       if (!confirm('임시 저장된 글을 지우고 빈 화면에서 새로 쓸까요?')) return;
       store.del(DRAFT_KEY);
-      fill({ category: 'real', warnings: ['faint'], tags: [], title: '', content: '<p><br></p>' });
+      fill(BLANK);
       draftClear.hidden = true;
       say('새 글');
     });
+
+    if (id) draftSave.hidden = true;   // 이미 발행한 글을 고칠 때는 임시 저장 없음
 
     if (id) {
       /* ---- 수정 모드 ---- */
@@ -553,8 +642,25 @@
           publish.disabled = false;
         })
         .catch((err) => say(err.message));
+    } else if (draftId) {
+      /* ---- 서버 임시 글 이어 쓰기 (프로필 "임시 저장" 탭에서 들어옴) ---- */
+      say('불러오는 중…');
+      api('GET', '/api/drafts/' + draftId)
+        .then(({ draft }) => {
+          fill(draft);
+          loading = false;
+          showServerDraft();
+          say('임시 저장된 글을 불러왔어요 · 쓰는 동안 자동으로 저장돼요');
+        })
+        .catch((err) => {
+          // 불러오지 못했으면 빈 내용으로 서버 글을 덮어쓰지 않도록 서버 저장을 끔
+          draftId = null;
+          draftSave.disabled = true;
+          publish.disabled = true;
+          say(err.message);
+        });
     } else {
-      /* ---- 새 글: 임시 저장본이 있으면 이어 쓰기 ---- */
+      /* ---- 새 글: 이 브라우저에 임시 저장본이 있으면 이어 쓰기 ---- */
       const raw = store.get(DRAFT_KEY);
       let draft = null;
       try { draft = raw ? JSON.parse(raw) : null; } catch (e) { draft = null; }
@@ -580,14 +686,21 @@
         sourceUrl.focus();
         return;
       }
+      if (draftId) data.draft_id = draftId;   // 발행하면 서버가 이 임시 글을 지움
       publish.disabled = true;
+      clearTimeout(serverTimer);
       say(id ? '수정하는 중…' : '발행하는 중…');
       api(id ? 'PUT' : 'POST', id ? '/api/posts/' + id : '/api/posts', data)
         .then((res) => {
           if (!id) store.del(DRAFT_KEY);
+          leaving = true;
           location.href = 'post.html?id=' + (id || res.id);
         })
-        .catch((err) => { publish.disabled = false; say(err.message); });
+        .catch((err) => {
+          publish.disabled = false;
+          say(err.message);
+          if (draftId && dirty) saveServerSoon();   // 발행에 실패하면 멈췄던 자동 저장을 다시
+        });
     });
   }
 })();

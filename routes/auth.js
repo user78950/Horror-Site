@@ -88,7 +88,7 @@ router.post('/firebase', async (req, res) => {
   res.json({ user: auth.toPublicUser({ ...row, email, email_verified: verified ? 1 : 0 }) });
 });
 
-// 회원 탈퇴: 회원 정보와 쓴 글·댓글·반응·영화 점수·신고 기록을 모두 지움
+// 회원 탈퇴: 회원 정보와 쓴 글·임시 저장 글·댓글·반응·영화 점수·신고 기록을 모두 지움
 // (Firebase 쪽 계정은 브라우저가 이어서 지움. firebase-auth.js 참고)
 router.delete('/me', auth.requireAuth, async (req, res) => {
   const idToken = String((req.body && req.body.idToken) || '');
@@ -107,7 +107,8 @@ router.delete('/me', auth.requireAuth, async (req, res) => {
 
   const uid = me.id;
   const myPosts = db.prepare('SELECT id, content FROM posts WHERE user_id = ?').all(uid);
-  const images = myPosts.flatMap((p) => cleanup.imagesIn(p.content));
+  const myDrafts = db.prepare('SELECT content FROM drafts WHERE user_id = ?').all(uid);
+  const images = [...myPosts, ...myDrafts].flatMap((p) => cleanup.imagesIn(p.content));
   const postIds = myPosts.map((p) => p.id);
   // 내 반응·댓글이 있던 다른 사람 글, 내 점수가 있던 영화 (지운 뒤 숫자를 다시 세려고)
   const touchedPosts = new Set([
@@ -124,6 +125,7 @@ router.delete('/me', auth.requireAuth, async (req, res) => {
       db.prepare('DELETE FROM posts WHERE id = ?').run(pid);
       touchedPosts.delete(pid);
     });
+    db.prepare('DELETE FROM drafts WHERE user_id = ?').run(uid);
     db.prepare('DELETE FROM reactions WHERE user_id = ?').run(uid);
     db.prepare('DELETE FROM comments WHERE user_id = ?').run(uid);
     db.prepare('DELETE FROM movie_ratings WHERE user_id = ?').run(uid);

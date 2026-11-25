@@ -52,6 +52,9 @@ app.use('/api/stats', require('./routes/stats'));
 // 공포영화 순위·무서움 점수 (routes/movies.js)
 app.use('/api/movies', require('./routes/movies'));
 
+// 임시 저장 글: 본인만 보고 이어 쓰기 (routes/drafts.js)
+app.use('/api/drafts', require('./routes/drafts'));
+
 // 괴담 글 쓰기·보기·수정·삭제 (routes/posts.js)
 app.use('/api/posts', require('./routes/posts'));
 

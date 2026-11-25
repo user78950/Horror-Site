@@ -10,7 +10,7 @@ const REQUIRED = [
   'data/.gitignore',
   'db/database.js',
   'lib/auth.js', 'lib/firebase.js', 'lib/sanitize.js', 'lib/cleanup.js', 'lib/paths.js', 'render.yaml',
-  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'routes/users.js', 'routes/admin.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
+  'routes/auth.js', 'routes/posts.js', 'routes/uploads.js', 'routes/comments.js', 'routes/movies.js', 'routes/stats.js', 'routes/reports.js', 'routes/users.js', 'routes/admin.js', 'routes/drafts.js', 'scripts/seed-movies.js', 'scripts/seed-posts.js',
   'public/index.html', 'public/post.html', 'public/write.html', 'public/login.html', 'public/signup.html',
   'public/movies.html', 'public/guidelines.html', 'public/privacy.html', 'public/admin.html', 'public/account.html', 'public/profile.html',
   'public/css/style.css',
@@ -54,7 +54,9 @@ const CONTENT_CHECKS = [
   ['server.js', 'startScheduledCleanup', '주기 정리가 켜져 있어야 해요'],
   ['server.js', "app.use('/api/users'", '프로필 API 가 연결되어 있어야 해요'],
   ['server.js', "app.use('/uploads'", '사진을 저장 위치(UPLOAD_DIR)에서 제공해야 해요'],
-  ['routes/uploads.js', 'UPLOAD_DIR', '사진 올리기가 저장 위치 설정을 따라야 해요']
+  ['routes/uploads.js', 'UPLOAD_DIR', '사진 올리기가 저장 위치 설정을 따라야 해요'],
+  ['server.js', "app.use('/api/drafts'", '임시 저장 API 가 연결되어 있어야 해요'],
+  ['lib/cleanup.js', 'FROM drafts', '사진 정리가 임시 저장 글에 쓰인 사진을 지우지 않아야 해요']
 ];
 
 const root = process.cwd();
